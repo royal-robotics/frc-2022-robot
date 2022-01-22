@@ -6,9 +6,17 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.commands.DriveCommand;
 import edu.wpi.first.wpilibj2.command.Command;
+
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.Button;
+//import frc.robot.commands.DefaultDriveCommand;
+//import frc.robot.subsystems.DrivetrainSubsystem;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -20,11 +28,21 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_exampleSubsystem = new DrivetrainSubsystem();
 
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
+  private final DriveCommand m_autoCommand = new DriveCommand(m_exampleSubsystem);
+
+  private final XboxController m_controller = new XboxController(Constants.PRIMARY_CONTROLLER_PORT);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
+    //flightStick.getForwardAxis().setInverted(true);
+    //flightStick.getStrafeAxis().setInverted(true);
+    //flightStick.getRotateAxis().setInverted(true);
+    m_controller.getStrafeAxis().setInverted(true);
+    m_controller.getRotateAxis().setInverted(true);
+
+    //CommandScheduler.getInstance().setDefaultCommand(drivetrainSubsystem, new DriveCommand(drivetrainSubsystem, getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis()));
+
     configureButtonBindings();
   }
 
@@ -34,7 +52,40 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+    /*new Button(m_controller::getBackButton)
+    // No requirements because we don't need to interrupt anything
+    .whenPressed(ExampleSubsystem::zeroGyroscope);
+    */
+
+        /*m_controller.getA().whenPressed(
+            () -> drivetrainSubsystem.resetGyroAngle(Rotation2.ZERO)
+        );
+        */
+
+        /*
+        m_controller.getX.whenPressed(
+            ExampleSubsystem::resetWheelAngles
+        );
+        */
+        
+        /*flightStick.getc().whenPressed(
+            () -> drivetrainSubsystem.resetGyroAngle(Rotation2.ZERO)
+        );*/
+            
+          
+       /* 
+        flightStick.getRawButton(9).whenPressed(
+                () -> drivetrainSubsystem.resetGyroAngle(Rotation2.ZERO)
+        );
+        */
+        /*
+        flightStick.getT2().whenPressed(
+                drivetrainSubsystem::resetWheelAngles
+        );
+        */
+
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -42,7 +93,29 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
+    // An DriveCommand will run in autonomous
     return m_autoCommand;
+  }
+
+  private static double deadband(double value, double deadband) {
+    if (Math.abs(value) > deadband) {
+      if (value > 0.0) {
+        return (value - deadband) / (1.0 - deadband);
+      } else {
+        return (value + deadband) / (1.0 - deadband);
+      }
+    } else {
+      return 0.0;
+    }
+  }
+
+  private static double modifyAxis(double value) {
+    // Deadband
+    value = deadband(value, 0.05);
+
+    // Square the axis
+    value = Math.copySign(value * value, value);
+
+    return value;
   }
 }
