@@ -5,7 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
+//import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.commands.DriveCommand;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,9 +26,9 @@ import edu.wpi.first.wpilibj2.command.button.Button;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final DrivetrainSubsystem m_exampleSubsystem = new DrivetrainSubsystem();
+  private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
-  private final DriveCommand m_autoCommand = new DriveCommand(m_exampleSubsystem);
+  //private final DriveCommand m_autoCommand = new DriveCommand(m_DrivetrainSubsystem, );
 
   private final XboxController m_controller = new XboxController(Constants.PRIMARY_CONTROLLER_PORT);
 
@@ -38,8 +38,18 @@ public class RobotContainer {
     //flightStick.getForwardAxis().setInverted(true);
     //flightStick.getStrafeAxis().setInverted(true);
     //flightStick.getRotateAxis().setInverted(true);
-    m_controller.getStrafeAxis().setInverted(true);
-    m_controller.getRotateAxis().setInverted(true);
+
+    m_drivetrainSubsystem.setDefaultCommand(
+      new DriveCommand(
+            m_drivetrainSubsystem,
+            ()-> modifyAxis(m_controller.getForwardAxis().get())* DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            ()-> -modifyAxis(m_controller.getStrafeAxis().get()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            ()-> -modifyAxis(m_controller.getRotateAxis().get()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+    ));
+    
+
+    //m_controller.getStrafeAxis().setInverted(true);
+    //m_controller.getRotateAxis().setInverted(true);
 
     //CommandScheduler.getInstance().setDefaultCommand(drivetrainSubsystem, new DriveCommand(drivetrainSubsystem, getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis()));
 
@@ -55,17 +65,17 @@ public class RobotContainer {
   private void configureButtonBindings() {
     /*new Button(m_controller::getBackButton)
     // No requirements because we don't need to interrupt anything
-    .whenPressed(ExampleSubsystem::zeroGyroscope);
+    .whenPressed(DrivetrainSubsystem::zeroGyroscope);
     */
 
-        /*m_controller.getA().whenPressed(
-            () -> drivetrainSubsystem.resetGyroAngle(Rotation2.ZERO)
+        m_controller.getA().whenPressed(
+            () ->  m_drivetrainSubsystem.zeroGyroscope()
         );
-        */
+        
 
         /*
         m_controller.getX.whenPressed(
-            ExampleSubsystem::resetWheelAngles
+            DrivetrainSubsystem::resetWheelAngles
         );
         */
         
@@ -94,7 +104,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An DriveCommand will run in autonomous
-    return m_autoCommand;
+    //return m_autoCommand;
+    return new InstantCommand();
   }
 
   private static double deadband(double value, double deadband) {

@@ -4,7 +4,7 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
@@ -13,7 +13,7 @@ import java.util.function.DoubleSupplier;
 /** An example command that uses an example subsystem. */
 public class DriveCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ExampleSubsystem m_subsystem;
+  private final DrivetrainSubsystem m_subsystem;
 
   private final DoubleSupplier m_translationXSupplier;
   private final DoubleSupplier m_translationYSupplier;
@@ -24,7 +24,7 @@ public class DriveCommand extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public DriveCommand(ExampleSubsystem subsystem, DoubleSupplier translationXSupplier,
+  public DriveCommand(DrivetrainSubsystem subsystem, DoubleSupplier translationXSupplier,
   DoubleSupplier translationYSupplier,
   DoubleSupplier rotationSupplier) {
 
