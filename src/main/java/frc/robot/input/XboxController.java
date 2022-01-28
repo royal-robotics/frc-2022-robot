@@ -1,6 +1,4 @@
-package frc.robot;
-
-import javax.print.attribute.standard.JobPrioritySupported;
+package frc.robot.input;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
@@ -17,41 +15,44 @@ public final class XboxController {
     private final Axis rotateAxis;
     private final Axis strafeAxis;
 
-
     public XboxController(int port) {
         joystick = new Joystick(port);
 
         A = new JoystickButton(joystick, 1);
         B = new JoystickButton(joystick, 2);
-        X = new JoystickButton(joystick,3);
-        Y = new JoystickButton(joystick,4);
+        X = new JoystickButton(joystick, 3);
+        Y = new JoystickButton(joystick, 4);
 
-        forwardAxis = new Axis(joystick, 1);
-        rotateAxis = new Axis(joystick, 4);
-        strafeAxis = new Axis(joystick, 0);
-
+        forwardAxis = new Axis(joystick, 1, true);
+        rotateAxis = new Axis(joystick, 4, true);
+        strafeAxis = new Axis(joystick, 0, true);
     }
 
-    public Axis getForwardAxis(){
+    public Axis getForwardAxis() {
         return forwardAxis;
     }
 
-    public Axis getRotateAxis(){
+    public Axis getRotateAxis() {
         return rotateAxis;
     }
-    public Axis getStrafeAxis(){
+
+    public Axis getStrafeAxis() {
         return strafeAxis;
     }
-    public Button getA(){
+
+    public Button getA() {
         return A;
     }
-    public Button getB(){
+
+    public Button getB() {
         return B;
     }
-    public Button getX(){
+
+    public Button getX() {
         return X;
     }
-    public Button getY(){
+
+    public Button getY() {
         return Y;
     }
 }

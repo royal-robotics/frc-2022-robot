@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.input;
 
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj.Joystick;
@@ -12,9 +12,14 @@ public final class Axis {
 	private final Joystick joystick;
 	private final int axis;
 
-	public Axis(Joystick joystick, int axis) {
+	public Axis(Joystick joystick, int axis, boolean inverted) {
 		this.joystick = joystick;
 		this.axis = axis;
+		this.inverted = inverted;
+	}
+
+	public Axis(Joystick joystick, int axis) {
+		this(joystick, axis, false);
 	}
 
 	public boolean isInverted() {

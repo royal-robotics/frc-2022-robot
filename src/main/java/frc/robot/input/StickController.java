@@ -1,6 +1,4 @@
-package frc.robot;
-
-import javax.print.attribute.standard.JobPrioritySupported;
+package frc.robot.input;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
@@ -38,20 +36,23 @@ public final class StickController {
     public Axis getRotateAxis(){
         return rotateAxis;
     }
+
     public Axis getStrafeAxis(){
         return strafeAxis;
     }
+
     public Button getT1(){
         return t1;
     }
     public Button getT2(){
         return t2;
     }
+
     public Button getc(){
         return c;
     }
+
     public Button getMode(){
         return mode;
     }
-    
 }
