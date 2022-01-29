@@ -40,13 +40,17 @@ public class RobotContainer {
         m_controller.getA().whenPressed(
             () ->  m_drivetrainSubsystem.zeroGyroscope()
         );
+
+        m_controller.getY().whenPressed(
+            () -> m_drivetrainSubsystem.zeroGyroscope()
+        );
     }
 
     public Command getAutonomousCommand() {
-        PathPlannerTrajectory examplePath = PathPlanner.loadPath("Example Path", 8, 5);
-        PIDController x_control = new PIDController(1.0, 0, 0);
-        PIDController y_control = new PIDController(1.0, 0, 0);
-        ProfiledPIDController angle_control = new ProfiledPIDController(1.0, 0, 0, new TrapezoidProfile.Constraints(8, 5));
+        PathPlannerTrajectory examplePath = PathPlanner.loadPath("TurnPath", DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5);
+        PIDController x_control = new PIDController(0.1, 0, 0);
+        PIDController y_control = new PIDController(0.1, 0, 0);
+        ProfiledPIDController angle_control = new ProfiledPIDController(15, 0, 0, new TrapezoidProfile.Constraints(DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5));
         return new PPSwerveControllerCommand(examplePath,() -> m_drivetrainSubsystem.getPose(),m_drivetrainSubsystem.getKinematics(),x_control,y_control, angle_control, (SwerveModuleState[] states) -> m_drivetrainSubsystem.setModuleStates(states),m_drivetrainSubsystem);
     }
 }

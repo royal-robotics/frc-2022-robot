@@ -24,10 +24,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     // Based on the absolute position of the encoders, use this procedure to calculate:
     // https://github.com/SwerveDriveSpecialties/swerve-template#setting-up-module-offsets
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(277.78);
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(176.70);
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(59.01);
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(148.31);
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(277.63824462890625);
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(190.18707275390625);
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(24.95269775390625);
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(154.248046875);
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2;
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 0;
@@ -103,7 +103,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     private SwerveModuleState[] m_ModuleState = new SwerveModuleState[4];
 
+
     public DrivetrainSubsystem() {
+        zeroGyroscope();
         m_frontLeftModule = Mk3SwerveModuleHelper.createFalcon500(
             m_dashboardTab.getLayout("Front Left Module", BuiltInLayouts.kList)
                 .withSize(2, 4)
@@ -145,6 +147,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
             BACK_RIGHT_MODULE_STEER_OFFSET);
 
         m_dashboardTab.addNumber("Gryo", () -> getGyroscopeRotation().getDegrees());
+        m_dashboardTab.addNumber("x-Odometry", () -> m_odometry.getPoseMeters().getX());
+        m_dashboardTab.addNumber("y-Odometry", () -> m_odometry.getPoseMeters().getY());
+
+        
+        m_ModuleState[0] = new SwerveModuleState();
+        m_ModuleState[1] = new SwerveModuleState();
+        m_ModuleState[2] = new SwerveModuleState();
+        m_ModuleState[3] = new SwerveModuleState();
     }
 
   /**
