@@ -4,11 +4,18 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.GenericHID;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import frc.robot.input.XboxController;
 import edu.wpi.first.wpilibj2.command.*;
+import com.pathplanner.lib.*;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import com.pathplanner.lib.commands.*;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -36,6 +43,10 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return new InstantCommand();
+        PathPlannerTrajectory examplePath = PathPlanner.loadPath("Example Path", 8, 5);
+        PIDController x_control = new PIDController(1.0, 0, 0);
+        PIDController y_control = new PIDController(1.0, 0, 0);
+        ProfiledPIDController angle_control = new ProfiledPIDController(1.0, 0, 0, new TrapezoidProfile.Constraints(8, 5));
+        return new PPSwerveControllerCommand(examplePath,() -> m_drivetrainSubsystem.getPose(),m_drivetrainSubsystem.getKinematics(),x_control,y_control, angle_control, (SwerveModuleState[] states) -> m_drivetrainSubsystem.setModuleStates(states),m_drivetrainSubsystem);
     }
 }
