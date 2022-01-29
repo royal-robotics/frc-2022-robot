@@ -21,10 +21,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     // Based on the absolute position of the encoders, use this procedure to calculate:
     // https://github.com/SwerveDriveSpecialties/swerve-template#setting-up-module-offsets
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(287.3);
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(192.0);
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(63.6);
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(149.1);
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(277.78);
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(176.70);
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(59.01);
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(148.31);
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2;
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 0;
@@ -42,7 +42,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 2;
 
     // This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
-    public static final double MAX_VOLTAGE = 12.0;
+    public static final double MAX_VOLTAGE = 6.0;
 
     // FIXME Measure the drivetrain's maximum velocity or calculate the theoretical.
     //  The formula for calculating the theoretical maximum velocity is:
