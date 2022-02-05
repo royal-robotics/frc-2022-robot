@@ -10,6 +10,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.GenericHID;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
+import frc.robot.input.StickController;
 import frc.robot.input.XboxController;
 import edu.wpi.first.wpilibj2.command.*;
 import com.pathplanner.lib.*;
@@ -28,8 +29,8 @@ public class RobotContainer {
 
     private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
-    private final XboxController m_controller = new XboxController(PRIMARY_CONTROLLER_PORT);
-
+   // private final XboxController m_controller = new XboxController(PRIMARY_CONTROLLER_PORT);
+   private final StickController m_controller = new StickController(PRIMARY_CONTROLLER_PORT);
     public RobotContainer() {
         m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(m_drivetrainSubsystem, m_controller));
 
@@ -37,13 +38,9 @@ public class RobotContainer {
     }
 
     private void configureButtonBindings() {
-        m_controller.getA().whenPressed(
-            () ->  m_drivetrainSubsystem.zeroGyroscope()
-        );
-
-        m_controller.getY().whenPressed(
-            () -> m_drivetrainSubsystem.zeroGyroscope()
-        );
+        // m_controller.getA().whenPressed(
+        //     () ->  m_drivetrainSubsystem.zeroGyroscope()
+        // );
     }
 
     public Command getAutonomousCommand() {

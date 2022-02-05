@@ -25,7 +25,7 @@ public final class StickController {
         mode = new JoystickButton(joystick,24);
 
         forwardAxis = new Axis(joystick, 1);
-        rotateAxis = new Axis(joystick, 5);
+        rotateAxis = new Axis(joystick, 2);
         strafeAxis = new Axis(joystick, 0);
     }
 
