@@ -19,7 +19,7 @@ public final class StickController {
     public StickController(int port) {
         joystick = new Joystick(port);
 
-        t1 = new JoystickButton(joystick, 9);
+        t1 = new JoystickButton(joystick,11);
         t2 = new JoystickButton(joystick, 10);
         c = new JoystickButton(joystick,5);
         mode = new JoystickButton(joystick,24);

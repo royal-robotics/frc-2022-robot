@@ -24,10 +24,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     // Based on the absolute position of the encoders, use this procedure to calculate:
     // https://github.com/SwerveDriveSpecialties/swerve-template#setting-up-module-offsets
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(277.63824462890625);
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(190.18707275390625);
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(24.95269775390625);
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(154.248046875);
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(279.052734375);
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(179.11834716796875);
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(60.46600341796875);
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(172.705078125);
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2;
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 0;
@@ -99,7 +99,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final SwerveModule m_backLeftModule;
     private final SwerveModule m_backRightModule;
 
-    private final ShuffleboardTab m_dashboardTab = Shuffleboard.getTab("Drivetrain");
+    public final ShuffleboardTab m_dashboardTab = Shuffleboard.getTab("Drivetrain");
 
     private SwerveModuleState[] m_ModuleState = new SwerveModuleState[4];
 
