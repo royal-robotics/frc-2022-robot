@@ -19,30 +19,30 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DrivetrainSubsystem extends SubsystemBase {
 
-    public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.6604;
-    public static final double DRIVETRAIN_WHEELBASE_METERS = 0.4191;
+    public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.5969;
+    public static final double DRIVETRAIN_WHEELBASE_METERS = 0.5969;
 
     // Based on the absolute position of the encoders, use this procedure to calculate:
     // https://github.com/SwerveDriveSpecialties/swerve-template#setting-up-module-offsets
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(279.052734375);
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(179.11834716796875);
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(60.46600341796875);
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(172.705078125);
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(197.4);
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(180.2);
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(219.7);
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(156.5);
 
-    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2;
-    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 0;
-    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 3;
-    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR  = 1;
+    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
+    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 3;
+    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 2;
+    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR  = 6;
 
-    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 6;
-    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 5;
-    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 4;
-    public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 7;
+    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 7;
+    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 4;
+    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 0;
+    public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 5;
 
-    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 3;
-    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 1;
-    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 0;
-    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 2;
+    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 2;
+    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 0;
+    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 3;
+    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 1;
 
     // This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
     public static final double MAX_VOLTAGE = 12.0;

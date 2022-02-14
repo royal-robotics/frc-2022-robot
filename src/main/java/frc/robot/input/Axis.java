@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj.Joystick;
 
 public final class Axis {
-	public static final double DEADBAND = 0.05;
+	public static final double DEADBAND = 0.1;
 
 	private boolean inverted = false;
 	private double scale = 1.0;
@@ -43,14 +43,18 @@ public final class Axis {
 	};
 
 	public double get() {
-		return get(false, false);
+		return get(DEADBAND, false, false);
+	}
+
+	public double get(double db) {
+		return get(db, false, false);
 	}
 
 	public double get(boolean squared) {
-		return get(squared, false);
+		return get(DEADBAND, squared, false);
 	}
 
-	public double get(boolean squared, boolean ignoreScale) {
+	public double get(double db, boolean squared, boolean ignoreScale) {
 		double value = getRaw();
 
 		// Invert if axis is inverted
@@ -59,7 +63,15 @@ public final class Axis {
 		}
 
 		// Deadband value
-		value = deadband(value, DEADBAND);
+		value = deadband(value, db);
+		if (value != 0 && db > DEADBAND) {
+			double diff = (1 - DEADBAND) / (1 - db);
+			if (value > 0) {
+				value = diff * value - (diff - 1);
+			} else {
+				value = diff * value + (diff - 1);
+			}
+		}
 
 		// Square value
 		if (squared) {
@@ -83,7 +95,7 @@ public final class Axis {
 		};
 	}
     public static double deadband(double input) {
-		return deadband(input, 0.025);
+		return deadband(input, DEADBAND);
 	}
 
 	public static double deadband(double input, double buffer) {
