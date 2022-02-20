@@ -1,42 +1,37 @@
 package frc.robot.subsystems;
 
-//import com.revrobotics.CANSparkMax;
-//import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.wpilibj.CAN;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimberSubsystem extends SubsystemBase{
 
-    public final int S1 = 1;
-    public final int S2 = 2;
-    public final int S4 = 4;
+    public final int LEFT_CLIMBER_MOTOR = 1;
+    public final int RIGHT_CLIMBER_MOTOR = 2;
+    public final int CLIMBER_ANGLE_MOTOR = 4;
 
-    //private final CANSparkMax m_S1;
-    //private final CANSparkMax m_S2;
-    //private final CANSparkMax m_S4;
+    private final CANSparkMax m_leftClimber;
+    private final CANSparkMax m_rightClimber;
+    private final CANSparkMax m_climberAngle;
 
-    private double[] m_CANState = new double[3];
+    private double m_climberState = 0;
+    private double m_climberAngleState = 0;
 
     public ClimberSubsystem(){
-       // m_S1 = new CANSparkMax(S1, CANSparkMax.MotorType.kBrushless);
-       // m_S2 = new CANSparkMax(S2, CANSparkMax.MotorType.kBrushless);
-       // m_S4 = new CANSparkMax(S4, CANSparkMax.MotorType.kBrushless);
-
-        m_CANState[0] = 0;
-        m_CANState[1] = 0;
-        m_CANState[2] = 0;
+        m_leftClimber = new CANSparkMax(LEFT_CLIMBER_MOTOR, MotorType.kBrushless);
+        m_rightClimber = new CANSparkMax(RIGHT_CLIMBER_MOTOR, MotorType.kBrushless);
+        m_climberAngle = new CANSparkMax(CLIMBER_ANGLE_MOTOR, MotorType.kBrushless);
     }
 
-    public void setModuleStates(double[] states){
-        m_CANState = states;
+    public void setMotorStates(double climberState, double climberAngleState){
+        m_climberState = climberState;
+        m_climberAngleState = climberAngleState;
     }
 
     @Override
     public void periodic() {
-        double[] states = m_CANState;
-
-       // m_S1.set(states[0]);
-       // m_S2.set(states[1]);
-       // m_S4.set(states[2]);
+        m_leftClimber.set(m_climberState);
+        m_rightClimber.set(m_climberState);
+        m_climberAngle.set(m_climberAngleState);
     }
 }

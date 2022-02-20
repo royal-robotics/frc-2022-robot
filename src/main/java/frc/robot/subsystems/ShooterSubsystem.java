@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -12,72 +11,59 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSubsystem extends SubsystemBase{
 
-    public final int S3 = 3;
-    public final int D8 = 8;
-    public final int D9 = 9;
-    public final int D10 = 10;
+    public final int SHOOTER_ANGLE_MOTOR = 3;
+    public final int RIGHT_SHOOTER_WHEEL_MOTOR = 8;
+    public final int LEFT_SHOOTER_WHEEL_MOTOR = 9;
+    public final int INTAKE_MOTOR = 10;
 
-    public final int P1L = 1;
-    public final int P1R = 6;
-    public final int P2L = 3;
-    public final int P2R = 4; 
+    public final int EXTEND_INTAKE_LEFT = 1;
+    public final int EXTEND_INTAKE_RIGHT = 6;
+    public final int KICKER_LEFT = 3;
+    public final int KICKER_RIGHT = 4;
 
-    private final CANSparkMax m_S3;
-    private final TalonSRX m_D8;
-    private final TalonSRX m_D9;
-    private final TalonSRX m_D10;
+    private final CANSparkMax m_shooterAngle;
+    private final TalonSRX m_rightShooterWheel;
+    private final TalonSRX m_leftShooterWheel;
+    private final TalonSRX m_intake;
 
-    private final DoubleSolenoid m_P1;
-    private final DoubleSolenoid m_P2;
-    
+    private final DoubleSolenoid m_extendIntake;
+    private final DoubleSolenoid m_kicker;
 
-    private double[] m_MotorState = new double[4];
-    private DoubleSolenoid.Value[] m_SolenoidState = new DoubleSolenoid.Value[2];
-    
-
+    private double m_shooterAngleState = 0;
+    private double m_shooterWheelState = 0;
+    private double m_intakeState = 0;
+    private DoubleSolenoid.Value m_extendIntakeState = DoubleSolenoid.Value.kOff;
+    private DoubleSolenoid.Value m_kickerState = DoubleSolenoid.Value.kOff;
 
     public ShooterSubsystem(){
-       m_S3 = new CANSparkMax(S3, MotorType.kBrushless);
-       m_S3.restoreFactoryDefaults(); 
-        m_D8 = new TalonSRX(D8);
-        m_D9 = new TalonSRX(D9);
-        m_D10 = new TalonSRX(D10);
+        m_shooterAngle = new CANSparkMax(SHOOTER_ANGLE_MOTOR, MotorType.kBrushless);
+        m_rightShooterWheel = new TalonSRX(RIGHT_SHOOTER_WHEEL_MOTOR);
+        m_leftShooterWheel = new TalonSRX(LEFT_SHOOTER_WHEEL_MOTOR);
+        m_intake = new TalonSRX(INTAKE_MOTOR);
 
-        m_P1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, P1L, P1R);
-        m_P2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, P2L, P2R);
-
-        m_P1.set(DoubleSolenoid.Value.kOff);
-        m_P2.set(DoubleSolenoid.Value.kOff);
-
-        m_MotorState[0] = 0;
-        m_MotorState[1] = 0;
-        m_MotorState[2] = 0;
-        m_MotorState[3] = 0;
-
-        m_SolenoidState[0] = DoubleSolenoid.Value.kOff;
-        m_SolenoidState[1] = DoubleSolenoid.Value.kOff;
-
+        m_extendIntake = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, EXTEND_INTAKE_LEFT, EXTEND_INTAKE_RIGHT);
+        m_kicker = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, KICKER_LEFT, KICKER_RIGHT);
     }
 
-    public void setModuleStates(double[] states){
-        m_MotorState = states;
+    public void setMotorStates(double shooterAngle, double shooterWheel, double intake){
+        m_shooterAngleState = shooterAngle;
+        m_shooterWheelState = shooterWheel;
+        m_intakeState = intake;
     }
 
-    public void setSolenoidStates(DoubleSolenoid.Value[] states){
-        m_SolenoidState = states;
+    public void setSolenoidStates(DoubleSolenoid.Value extendIntake, DoubleSolenoid.Value kicker){
+        m_extendIntakeState = extendIntake;
+        m_kickerState = kicker;
     }
 
     @Override
     public void periodic(){
-        double[] states = m_MotorState;
-        DoubleSolenoid.Value[] solenoidStates = m_SolenoidState;
+        m_shooterAngle.set(m_shooterAngleState);
+        m_rightShooterWheel.set(ControlMode.PercentOutput, m_shooterWheelState);
+        m_leftShooterWheel.set(ControlMode.PercentOutput, m_shooterWheelState);
+        m_intake.set(ControlMode.PercentOutput, m_intakeState);
 
-        m_S3.set(states[0]);
-        m_D8.set(ControlMode.PercentOutput, states[1]);
-        m_D9.set(ControlMode.PercentOutput, states[2]);
-        m_D10.set(ControlMode.PercentOutput, states[3]);
-
-        m_P1.set(solenoidStates[0]);
-        m_P2.set(solenoidStates[1]);   
+        m_extendIntake.set(m_extendIntakeState);
+        m_kicker.set(m_kickerState);
     }
 }
