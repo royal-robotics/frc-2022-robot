@@ -26,13 +26,21 @@ import com.pathplanner.lib.commands.*;
  */
 public class RobotContainer {
     private static final int PRIMARY_CONTROLLER_PORT = 0;
+    private static final int SECONDARY_CONTROLLER_PORT = 1;
 
     private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+    private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
+    private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
 
    // private final XboxController m_controller = new XboxController(PRIMARY_CONTROLLER_PORT);
    private final StickController m_controller = new StickController(PRIMARY_CONTROLLER_PORT);
+   private final XboxController m_operator = new XboxController(SECONDARY_CONTROLLER_PORT);
+
     public RobotContainer() {
         m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(m_drivetrainSubsystem, m_controller));
+        m_climberSubsystem.setDefaultCommand(new DefaultClimbCommand(m_climberSubsystem, m_operator));
+        m_shooterSubsystem.setDefaultCommand(new DefaultShootCommand(m_shooterSubsystem, m_operator));
+
 
         configureButtonBindings();
     }

@@ -11,9 +11,10 @@ public final class XboxController {
     private final Button Y;
     private final Button X;
 
-    private final Axis forwardAxis;
-    private final Axis rotateAxis;
-    private final Axis strafeAxis;
+    private final Axis LeftX;
+    private final Axis LeftY;
+    private final Axis RightX;
+    private final Axis RightY;
 
     public XboxController(int port) {
         joystick = new Joystick(port);
@@ -23,21 +24,28 @@ public final class XboxController {
         X = new JoystickButton(joystick, 3);
         Y = new JoystickButton(joystick, 4);
 
-        forwardAxis = new Axis(joystick, 1, true);
-        rotateAxis = new Axis(joystick, 4, true);
-        strafeAxis = new Axis(joystick, 0, true);
+        LeftX = new Axis(joystick, 0, true);
+        LeftY = new Axis(joystick, 1, true);
+        RightX = new Axis(joystick, 4, true);
+        RightY = new Axis(joystick, 5, true);
+        
+
     }
 
-    public Axis getForwardAxis() {
-        return forwardAxis;
+    public Axis getLeftX() {
+        return LeftX;
     }
 
-    public Axis getRotateAxis() {
-        return rotateAxis;
+    public Axis getLeftY() {
+        return LeftY;
     }
 
-    public Axis getStrafeAxis() {
-        return strafeAxis;
+    public Axis getRightX() {
+        return RightX;
+    }
+
+    public Axis getRightY() {
+        return RightY;
     }
 
     public Button getA() {
