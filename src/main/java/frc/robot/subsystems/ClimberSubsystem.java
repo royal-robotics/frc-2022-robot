@@ -30,8 +30,10 @@ public class ClimberSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        m_leftClimber.set(m_climberState);
-        m_rightClimber.set(m_climberState);
+        double climbSpeed = m_climberState;
+        m_leftClimber.set(climbSpeed);
+        m_rightClimber.set(-climbSpeed);
+
         m_climberAngle.set(m_climberAngleState);
     }
 }

@@ -10,11 +10,14 @@ public final class XboxController {
     private final Button B;
     private final Button Y;
     private final Button X;
+    private final Button LeftBumper;
+    private final Button RightBumper;
 
     private final Axis LeftX;
     private final Axis LeftY;
     private final Axis RightX;
     private final Axis RightY;
+    private final Axis LeftTrigger;
 
     public XboxController(int port) {
         joystick = new Joystick(port);
@@ -23,13 +26,14 @@ public final class XboxController {
         B = new JoystickButton(joystick, 2);
         X = new JoystickButton(joystick, 3);
         Y = new JoystickButton(joystick, 4);
+        LeftBumper = new JoystickButton(joystick, 5);
+        RightBumper = new JoystickButton(joystick, 6);
 
         LeftX = new Axis(joystick, 0, true);
         LeftY = new Axis(joystick, 1, true);
+        LeftTrigger = new Axis(joystick, 2, true);
         RightX = new Axis(joystick, 4, true);
         RightY = new Axis(joystick, 5, true);
-        
-
     }
 
     public Axis getLeftX() {
@@ -48,6 +52,10 @@ public final class XboxController {
         return RightY;
     }
 
+    public Axis getLeftTrigger() {
+        return LeftTrigger;
+    }
+
     public Button getA() {
         return A;
     }
@@ -62,5 +70,13 @@ public final class XboxController {
 
     public Button getY() {
         return Y;
+    }
+
+    public Button getLeftBumper() {
+        return LeftBumper;
+    }
+
+    public Button getRightBumper() {
+        return RightBumper;
     }
 }

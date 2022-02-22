@@ -1,43 +1,57 @@
 package frc.robot.commands;
 
-
 import frc.robot.input.XboxController;
 import frc.robot.subsystems.ShooterSubsystem;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class DefaultShootCommand extends CommandBase {
     private final ShooterSubsystem m_subsystem;
+
     private final DoubleSupplier m_shooterAngleSupplier;
-    private final BooleanSupplier m_intake;
-    private final BooleanSupplier m_outtake;
-    private final BooleanSupplier m_shoot;
+    private final DoubleSupplier m_shooterWheelsSupplier;
+    private final BooleanSupplier m_intakeSupplier;
+    private final BooleanSupplier m_outtakeSupplier;
+    private final BooleanSupplier m_reverseWheelsSupplier;
+    private final BooleanSupplier m_extendIntakeSupplier;
+    private final BooleanSupplier m_kickerSupplier;
 
     public DefaultShootCommand(ShooterSubsystem subsystem,
             DoubleSupplier shooterAngleSupplier,
-            BooleanSupplier intake,
-            BooleanSupplier outtake,
-            BooleanSupplier shoot){
+            DoubleSupplier shooterWheelsSupplier,
+            BooleanSupplier intakeSupplier,
+            BooleanSupplier outtakeSupplier,
+            BooleanSupplier reverseWheelsSupplier,
+            BooleanSupplier extendIntakeSupplier,
+            BooleanSupplier kickerSupplier){
 
         m_subsystem = subsystem;
         m_shooterAngleSupplier = shooterAngleSupplier;
-        m_intake = intake;
-        m_outtake = outtake;
-        m_shoot = shoot;
+        m_shooterWheelsSupplier = shooterWheelsSupplier;
+        m_intakeSupplier = intakeSupplier;
+        m_outtakeSupplier = outtakeSupplier;
+        m_reverseWheelsSupplier = reverseWheelsSupplier;
+        m_extendIntakeSupplier = extendIntakeSupplier;
+        m_kickerSupplier = kickerSupplier;
 
         addRequirements(subsystem);
+
     }
 
     public DefaultShootCommand(ShooterSubsystem subsystem, XboxController controller) {
         this(
             subsystem,
             ()-> -controller.getLeftY().get(),
+            ()-> controller.getLeftTrigger().get(),
             ()-> controller.getA().get(),
             ()-> controller.getY().get(),
-            ()-> controller.getX().get());
+            ()-> controller.getB().get(),
+            ()-> controller.getRightBumper().get(),
+            ()-> controller.getLeftBumper().get());
     }
 
     @Override
@@ -46,26 +60,42 @@ public class DefaultShootCommand extends CommandBase {
     @Override
     public void execute() {
         double shooterAngle = m_shooterAngleSupplier.getAsDouble();
-        double shooterWheels = (m_shoot.getAsBoolean()) ? 0.25 : 0;
+        double shooterWheels = m_reverseWheelsSupplier.getAsBoolean() ?
+            m_shooterWheelsSupplier.getAsDouble() :
+            -m_shooterWheelsSupplier.getAsDouble();
 
-        boolean in = m_intake.getAsBoolean();
-        boolean out = m_outtake.getAsBoolean();
+        boolean in = m_intakeSupplier.getAsBoolean();
+        boolean out = m_outtakeSupplier.getAsBoolean();
         double intakeWheels = 0;
 
         if(in && out){
             intakeWheels = 0;
         }else if(in){
-            intakeWheels = 0.25;
-        }else if(out){
             intakeWheels = -0.25;
+            shooterWheels = -0.4;
+        }else if(out){
+            intakeWheels = 0.25;
+            shooterWheels = 0.4;
         }
 
         m_subsystem.setMotorStates(shooterAngle, shooterWheels, intakeWheels);
+
+        m_subsystem.setSetpoint(50);
+
+        DoubleSolenoid.Value extendIntake = m_extendIntakeSupplier.getAsBoolean() ?
+            DoubleSolenoid.Value.kReverse :
+            DoubleSolenoid.Value.kForward;
+        DoubleSolenoid.Value kicker = m_kickerSupplier.getAsBoolean() ?
+            DoubleSolenoid.Value.kReverse :
+            DoubleSolenoid.Value.kForward;
+
+        m_subsystem.setSolenoidStates(extendIntake, kicker);
     }
 
     @Override
     public void end(boolean interrupted) {
         m_subsystem.setMotorStates(0, 0, 0);
+        m_subsystem.setSolenoidStates(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward);
     }
 
     @Override

@@ -24,10 +24,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     // Based on the absolute position of the encoders, use this procedure to calculate:
     // https://github.com/SwerveDriveSpecialties/swerve-template#setting-up-module-offsets
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(191.2445068359375);
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(170.233154296875);
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(198.97613525390625);
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(151.51519775390625);
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(324.13787841796875);
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(35.760498046875);
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(202.05230712890625);
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(146.77734375);
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 3;
@@ -146,15 +146,24 @@ public class DrivetrainSubsystem extends SubsystemBase {
             BACK_RIGHT_MODULE_STEER_ENCODER,
             BACK_RIGHT_MODULE_STEER_OFFSET);
 
-        m_dashboardTab.addNumber("Gryo", () -> getGyroscopeRotation().getDegrees());
-        m_dashboardTab.addNumber("x-Odometry", () -> m_odometry.getPoseMeters().getX());
-        m_dashboardTab.addNumber("y-Odometry", () -> m_odometry.getPoseMeters().getY());
+        m_dashboardTab.addNumber("Gryo", () -> getGyroscopeRotation().getDegrees()).withPosition(8, 0);
+        m_dashboardTab.addNumber("x-Odometry", () -> m_odometry.getPoseMeters().getX()).withPosition(8, 1);
+        m_dashboardTab.addNumber("y-Odometry", () -> m_odometry.getPoseMeters().getY()).withPosition(8, 2);
 
-        
         m_ModuleState[0] = new SwerveModuleState();
         m_ModuleState[1] = new SwerveModuleState();
         m_ModuleState[2] = new SwerveModuleState();
         m_ModuleState[3] = new SwerveModuleState();
+
+        ShuffleboardTab testTab = Shuffleboard.getTab("Test");
+        testTab.addNumber("FL Speed", () -> (m_ModuleState[0].speedMetersPerSecond)).withPosition(0, 0);
+        testTab.addNumber("FL Angle", () -> (m_ModuleState[0].angle.getDegrees())).withPosition(0, 1);
+        testTab.addNumber("FR Speed", () -> (m_ModuleState[1].speedMetersPerSecond)).withPosition(1, 0);
+        testTab.addNumber("FR Angle", () -> (m_ModuleState[1].angle.getDegrees())).withPosition(1, 1);
+        testTab.addNumber("BL Speed", () -> (m_ModuleState[2].speedMetersPerSecond)).withPosition(2, 0);
+        testTab.addNumber("BL Angle", () -> (m_ModuleState[2].angle.getDegrees())).withPosition(2, 1);
+        testTab.addNumber("BR Speed", () -> (m_ModuleState[3].speedMetersPerSecond)).withPosition(3, 0);
+        testTab.addNumber("BR Angle", () -> (m_ModuleState[3].angle.getDegrees())).withPosition(3, 1);
     }
 
   /**

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class DefaultClimbCommand extends CommandBase {
     private final ClimberSubsystem m_subsystem;
+
     private final DoubleSupplier m_climberAngleSupplier;
     private final DoubleSupplier m_climberSupplier;
 
@@ -36,7 +37,7 @@ public class DefaultClimbCommand extends CommandBase {
     @Override
     public void execute() {
         double climber = m_climberSupplier.getAsDouble();
-        double climberAngle = m_climberAngleSupplier.getAsDouble();
+        double climberAngle = m_climberAngleSupplier.getAsDouble() * 0.25;
         m_subsystem.setMotorStates(climber, climberAngle);
     }
 

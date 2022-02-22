@@ -3,7 +3,6 @@ package frc.robot.commands;
 import frc.robot.input.StickController;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
-
 public class DefaultDriveCommand extends DriveCommandBase {
 
     public DefaultDriveCommand(DrivetrainSubsystem subsystem, StickController controller) {
