@@ -80,7 +80,7 @@ public class DefaultShootCommand extends CommandBase {
 
         m_subsystem.setMotorStates(shooterAngle, shooterWheels, intakeWheels);
 
-        m_subsystem.setSetpoint(50);
+        m_subsystem.setSetpoint(0);
 
         DoubleSolenoid.Value extendIntake = m_extendIntakeSupplier.getAsBoolean() ?
             DoubleSolenoid.Value.kReverse :

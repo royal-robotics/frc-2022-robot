@@ -44,6 +44,7 @@ public class ShooterSubsystem extends SubsystemBase{
     private DoubleSolenoid.Value m_kickerState = DoubleSolenoid.Value.kForward;
 
     private NetworkTableEntry m_speedEntry;
+    private NetworkTableEntry m_angleEntry;
 
     private AnalogPotentiometer m_analogPotentiometer;
     private Encoder m_encoder;
@@ -51,7 +52,7 @@ public class ShooterSubsystem extends SubsystemBase{
     private double m_output;
     private double m_setpoint;
 
-    private PIDController m_angleController = new PIDController(0.002, 0, 0);
+    private PIDController m_angleController = new PIDController(0.01, 0.000001, 0);
 
     public ShooterSubsystem(){
         m_shooterAngle = new CANSparkMax(SHOOTER_ANGLE_MOTOR, MotorType.kBrushless);
@@ -70,12 +71,20 @@ public class ShooterSubsystem extends SubsystemBase{
             .withSize(2, 2)
             .getEntry();
 
-        m_analogPotentiometer = new AnalogPotentiometer(0, 3000, -1590);
+        m_angleEntry = Shuffleboard.getTab("Control")
+            .add("Wheel Angle", 0)
+            .withWidget(BuiltInWidgets.kNumberSlider)
+            .withProperties(Map.of("min", -1, "max", 1, "block increment", 0.01))
+            .withPosition(0, 0)
+            .withSize(2, 2)
+            .getEntry();
+
+        m_analogPotentiometer = new AnalogPotentiometer(0, -3788, 2141);
         m_encoder = new Encoder(10, 11, true);
         m_encoder.setDistancePerPulse(0.00390625);
 
         Shuffleboard.getTab("Control")
-        .addNumber("Wheel Angle", () -> m_analogPotentiometer.get())
+        .addNumber("Wheel Angle Sensor", () ->Math.round(m_analogPotentiometer.get()))
         .withPosition(4, 0);
 
         Shuffleboard.getTab("Control")
@@ -108,7 +117,7 @@ public class ShooterSubsystem extends SubsystemBase{
 
     @Override
     public void periodic(){
-        m_shooterAngle.set(m_shooterAngleState);
+        //m_shooterAngle.set(m_shooterAngleState);
 
         double speedEntry = m_speedEntry.getDouble(0);
         if (speedEntry != 0) {
@@ -130,6 +139,8 @@ public class ShooterSubsystem extends SubsystemBase{
         {
             m_angleController.setSetpoint(setpoint);
         }
-        m_output = -m_angleController.calculate(m_analogPotentiometer.get());
+        m_output = m_angleController.calculate(Math.round(m_analogPotentiometer.get()));
+        m_shooterAngle.set(m_output);
+        //m_shooterAngle.set(m_angleEntry.getDouble(0));
     }
 }
