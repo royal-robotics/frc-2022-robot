@@ -7,7 +7,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -29,6 +29,14 @@ public class ShooterSubsystem extends SubsystemBase{
     public final int KICKER_LEFT = 3;
     public final int KICKER_RIGHT = 4;
 
+    public final double TOP_ANGLE = -21;
+    public final double BOTTOM_ANGLE = 134;
+    public final double TOP_VOLTAGE = 2.787;
+    public final double BOTTOM_VOLTAGE = 2.583;
+
+    private double scale = (BOTTOM_ANGLE - TOP_ANGLE) / (TOP_VOLTAGE - BOTTOM_VOLTAGE);
+    private double offset = scale * TOP_VOLTAGE + TOP_ANGLE;
+
     private final CANSparkMax m_shooterAngle;
     private final TalonSRX m_rightShooterWheel;
     private final TalonSRX m_leftShooterWheel;
@@ -37,22 +45,26 @@ public class ShooterSubsystem extends SubsystemBase{
     private final DoubleSolenoid m_extendIntake;
     private final DoubleSolenoid m_kicker;
 
-    private double m_shooterAngleState = 0;
     private double m_shooterWheelState = 0;
     private double m_intakeState = 0;
     private DoubleSolenoid.Value m_extendIntakeState = DoubleSolenoid.Value.kForward;
     private DoubleSolenoid.Value m_kickerState = DoubleSolenoid.Value.kForward;
 
     private NetworkTableEntry m_speedEntry;
+    private NetworkTableEntry m_enableSpeedEntry;
     private NetworkTableEntry m_angleEntry;
+    private NetworkTableEntry m_enableAngleEntry;
 
-    private AnalogPotentiometer m_analogPotentiometer;
+    private AnalogInput m_analogPotentiometer;
     private Encoder m_encoder;
 
-    private double m_output;
-    private double m_setpoint;
+    private double m_angleOutput;
+    private double m_angleSetpoint = 45;
+    private double m_speedOutput;
+    private double m_speedSetpoint;
 
-    private PIDController m_angleController = new PIDController(0.01, 0.000001, 0);
+    private PIDController m_angleController = new PIDController(0.01, 0, 0);
+    private PIDController m_speedController = new PIDController(0.002, 0, 0);
 
     public ShooterSubsystem(){
         m_shooterAngle = new CANSparkMax(SHOOTER_ANGLE_MOTOR, MotorType.kBrushless);
@@ -66,42 +78,67 @@ public class ShooterSubsystem extends SubsystemBase{
         m_speedEntry = Shuffleboard.getTab("Control")
             .add("Wheel Speed", 0)
             .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(Map.of("min", 0, "max", 1, "block increment", 0.01))
+            .withProperties(Map.of("min", 0, "max", 3600, "block increment", 50))
             .withPosition(2, 0)
             .withSize(2, 2)
+            .getEntry();
+
+        m_enableSpeedEntry = Shuffleboard.getTab("Control")
+            .add("Enable Wheel Speed", false)
+            .withWidget(BuiltInWidgets.kToggleButton)
+            .withPosition(2, 2)
+            .withSize(2, 1)
             .getEntry();
 
         m_angleEntry = Shuffleboard.getTab("Control")
             .add("Wheel Angle", 0)
             .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(Map.of("min", -1, "max", 1, "block increment", 0.01))
+            .withProperties(Map.of("min", -10, "max", 130, "block increment", 1))
             .withPosition(0, 0)
             .withSize(2, 2)
             .getEntry();
 
-        m_analogPotentiometer = new AnalogPotentiometer(0, -3788, 2141);
+        m_enableAngleEntry = Shuffleboard.getTab("Control")
+            .add("Enable Wheel Angle", false)
+            .withWidget(BuiltInWidgets.kToggleButton)
+            .withPosition(0, 2)
+            .withSize(2, 1)
+            .getEntry();
+
+        m_analogPotentiometer = new AnalogInput(0);
         m_encoder = new Encoder(10, 11, true);
         m_encoder.setDistancePerPulse(0.00390625);
 
         Shuffleboard.getTab("Control")
-        .addNumber("Wheel Angle Sensor", () ->Math.round(m_analogPotentiometer.get()))
+        .addNumber("Wheel Angle Sensor", () -> m_analogPotentiometer.getAverageVoltage() * -scale + offset)
         .withPosition(4, 0);
 
         Shuffleboard.getTab("Control")
-        .addNumber("PID output", () -> m_output)
+        .addNumber("Wheel Angle Sensor Raw", () -> m_analogPotentiometer.getAverageVoltage())
+        .withPosition(4, 1);
+
+        Shuffleboard.getTab("Control")
+        .addNumber("Angle Output", () -> m_angleOutput)
         .withPosition(5, 0);
 
         Shuffleboard.getTab("Control")
-        .addNumber("Setpoint", () -> m_setpoint)
+        .addNumber("Angle Setpoint", () -> m_angleSetpoint)
         .withPosition(6, 0);
 
         Shuffleboard.getTab("Control")
-        .addNumber("Encoder", () -> m_encoder.getRate())
-        .withPosition(4, 2);
+        .addNumber("Speed Output", () -> m_speedOutput)
+        .withPosition(5, 1);
+
+        Shuffleboard.getTab("Control")
+        .addNumber("Speed Setpoint", () -> m_speedSetpoint)
+        .withPosition(6, 1);
+
+        Shuffleboard.getTab("Control")
+        .addNumber("Speed Encoder", () -> m_encoder.getRate() * 60)
+        .withPosition(0, 3);
     }
 
-    public void setMotorStates(double shooterAngle, double shooterWheel, double intake){
-        m_shooterAngleState = shooterAngle;
+    public void setMotorStates(double shooterWheel, double intake){
         m_shooterWheelState = shooterWheel;
         m_intakeState = intake;
     }
@@ -111,36 +148,65 @@ public class ShooterSubsystem extends SubsystemBase{
         m_kickerState = kicker;
     }
 
-    public void setSetpoint(double setpoint) {
-        m_setpoint = setpoint;
+    public double getAngleSetpoint() {
+        return m_angleSetpoint;
+    }
+
+    public void setAngleSetpoint(double setpoint) {
+        if (setpoint < -20) {
+            setpoint = -20;
+        } else if (setpoint > 135) {
+            setpoint = 135;
+        }
+        m_angleSetpoint = setpoint;
+    }
+
+    public double getSpeedSetpoint() {
+        return m_speedSetpoint;
+    }
+
+    public void setSpeedSetpoint(double setpoint) {
+        if (setpoint < 0) {
+            setpoint = 0;
+        } else if (setpoint > 3600) {
+            setpoint = 3600;
+        }
+        m_speedSetpoint = setpoint;
     }
 
     @Override
     public void periodic(){
-        //m_shooterAngle.set(m_shooterAngleState);
-
-        double speedEntry = m_speedEntry.getDouble(0);
-        if (speedEntry != 0) {
-            m_rightShooterWheel.set(ControlMode.PercentOutput, speedEntry);
-            m_leftShooterWheel.set(ControlMode.PercentOutput, -speedEntry);
-        } else {
-            double wheelSpeed = m_shooterWheelState;
-            m_rightShooterWheel.set(ControlMode.PercentOutput, wheelSpeed);
-            m_leftShooterWheel.set(ControlMode.PercentOutput, -wheelSpeed);
+        double wheelSpeed = m_shooterWheelState;
+        double speedSetpoint = m_speedSetpoint;
+        if (m_enableSpeedEntry.getBoolean(false)) {
+            speedSetpoint = m_speedEntry.getDouble(0);
         }
+        if (m_speedController.getSetpoint() != speedSetpoint)
+        {
+            m_speedController.setSetpoint(speedSetpoint);
+        }
+        m_speedOutput = m_speedController.calculate(m_encoder.getRate() * 60);
+        if (m_enableSpeedEntry.getBoolean(false)) {
+            wheelSpeed = m_speedOutput;
+        }
+        m_rightShooterWheel.set(ControlMode.PercentOutput, wheelSpeed);
+        m_leftShooterWheel.set(ControlMode.PercentOutput, -wheelSpeed);
 
         m_intake.set(ControlMode.PercentOutput, m_intakeState);
 
         m_extendIntake.set(m_extendIntakeState);
         m_kicker.set(m_kickerState);
 
-        double setpoint = m_setpoint;
-        if (m_angleController.getSetpoint() != setpoint)
-        {
-            m_angleController.setSetpoint(setpoint);
+        double angleSetpoint = m_angleSetpoint;
+        if (m_enableAngleEntry.getBoolean(false)) {
+            angleSetpoint = m_angleEntry.getDouble(0);
         }
-        m_output = m_angleController.calculate(Math.round(m_analogPotentiometer.get()));
-        m_shooterAngle.set(m_output);
-        //m_shooterAngle.set(m_angleEntry.getDouble(0));
+
+        if (m_angleController.getSetpoint() != angleSetpoint)
+        {
+            m_angleController.setSetpoint(angleSetpoint);
+        }
+        m_angleOutput = m_angleController.calculate(m_analogPotentiometer.getAverageVoltage() * -scale + offset);
+        m_shooterAngle.set(m_angleOutput);
     }
 }

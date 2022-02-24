@@ -39,7 +39,6 @@ public class DefaultShootCommand extends CommandBase {
         m_kickerSupplier = kickerSupplier;
 
         addRequirements(subsystem);
-
     }
 
     public DefaultShootCommand(ShooterSubsystem subsystem, XboxController controller) {
@@ -47,7 +46,7 @@ public class DefaultShootCommand extends CommandBase {
             subsystem,
             ()-> -controller.getLeftY().get(),
             ()-> controller.getLeftTrigger().get(),
-            ()-> controller.getA().get(),
+            ()-> controller.getX().get(),
             ()-> controller.getY().get(),
             ()-> controller.getB().get(),
             ()-> controller.getRightBumper().get(),
@@ -59,7 +58,6 @@ public class DefaultShootCommand extends CommandBase {
 
     @Override
     public void execute() {
-        double shooterAngle = m_shooterAngleSupplier.getAsDouble();
         double shooterWheels = m_reverseWheelsSupplier.getAsBoolean() ?
             m_shooterWheelsSupplier.getAsDouble() :
             -m_shooterWheelsSupplier.getAsDouble();
@@ -78,9 +76,11 @@ public class DefaultShootCommand extends CommandBase {
             shooterWheels = 0.4;
         }
 
-        m_subsystem.setMotorStates(shooterAngle, shooterWheels, intakeWheels);
+        m_subsystem.setMotorStates(shooterWheels, intakeWheels);
 
-        m_subsystem.setSetpoint(0);
+        double setpointChange = m_shooterAngleSupplier.getAsDouble() * 2;
+        double newSetpoint = m_subsystem.getAngleSetpoint() + setpointChange;
+        m_subsystem.setAngleSetpoint(newSetpoint);
 
         DoubleSolenoid.Value extendIntake = m_extendIntakeSupplier.getAsBoolean() ?
             DoubleSolenoid.Value.kReverse :
@@ -94,7 +94,7 @@ public class DefaultShootCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        m_subsystem.setMotorStates(0, 0, 0);
+        m_subsystem.setMotorStates(0, 0);
         m_subsystem.setSolenoidStates(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward);
     }
 

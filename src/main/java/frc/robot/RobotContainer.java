@@ -31,6 +31,8 @@ public class RobotContainer {
     private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
     private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
 
+    private final PickupCommand m_pickupCommand = new PickupCommand(m_shooterSubsystem);
+
    // private final XboxController m_controller = new XboxController(PRIMARY_CONTROLLER_PORT);
    private final StickController m_controller = new StickController(PRIMARY_CONTROLLER_PORT);
    private final XboxController m_operator = new XboxController(SECONDARY_CONTROLLER_PORT);
@@ -50,6 +52,12 @@ public class RobotContainer {
         // );
         m_controller.getT1().whenPressed(
             () -> m_drivetrainSubsystem.zeroGyroscope()
+        );
+        m_operator.getA().whenPressed(
+            () -> m_pickupCommand.schedule()
+        );
+        m_operator.getA().whenReleased(
+            () -> m_pickupCommand.cancel()
         );
     }
 
