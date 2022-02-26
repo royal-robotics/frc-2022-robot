@@ -28,7 +28,7 @@ public class DefaultClimbCommand extends CommandBase {
         this(
             subsystem,
             ()-> -controller.getRightX().get(),
-            ()-> -controller.getRightY().get());
+            ()-> controller.getRightY().get() * 0.5);
     }
 
     @Override

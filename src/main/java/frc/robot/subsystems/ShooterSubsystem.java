@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -60,11 +61,13 @@ public class ShooterSubsystem extends SubsystemBase{
 
     private double m_angleOutput;
     private double m_angleSetpoint = 45;
+    private double m_speedFFOutput;
     private double m_speedOutput;
     private double m_speedSetpoint;
 
     private PIDController m_angleController = new PIDController(0.01, 0, 0);
-    private PIDController m_speedController = new PIDController(0.002, 0, 0);
+    private SimpleMotorFeedforward m_speedFeedForward = new SimpleMotorFeedforward(0.00002, 0.00026);
+    private PIDController m_speedController = new PIDController(0.001, 0, 0);
 
     public ShooterSubsystem(){
         m_shooterAngle = new CANSparkMax(SHOOTER_ANGLE_MOTOR, MotorType.kBrushless);
@@ -78,7 +81,7 @@ public class ShooterSubsystem extends SubsystemBase{
         m_speedEntry = Shuffleboard.getTab("Control")
             .add("Wheel Speed", 0)
             .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(Map.of("min", 0, "max", 3600, "block increment", 50))
+            .withProperties(Map.of("min", 0, "max", 3800, "block increment", 50))
             .withPosition(2, 0)
             .withSize(2, 2)
             .getEntry();
@@ -93,7 +96,7 @@ public class ShooterSubsystem extends SubsystemBase{
         m_angleEntry = Shuffleboard.getTab("Control")
             .add("Wheel Angle", 0)
             .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(Map.of("min", -10, "max", 130, "block increment", 1))
+            .withProperties(Map.of("min", -20, "max", 130, "block increment", 1))
             .withPosition(0, 0)
             .withSize(2, 2)
             .getEntry();
@@ -119,23 +122,31 @@ public class ShooterSubsystem extends SubsystemBase{
 
         Shuffleboard.getTab("Control")
         .addNumber("Angle Output", () -> m_angleOutput)
-        .withPosition(5, 0);
+        .withPosition(0, 3);
 
         Shuffleboard.getTab("Control")
         .addNumber("Angle Setpoint", () -> m_angleSetpoint)
-        .withPosition(6, 0);
+        .withPosition(1, 3);
 
         Shuffleboard.getTab("Control")
-        .addNumber("Speed Output", () -> m_speedOutput)
-        .withPosition(5, 1);
+        .addNumber("Speed FF Output", () -> m_speedFFOutput)
+        .withPosition(2, 3);
+
+        Shuffleboard.getTab("Control")
+        .addNumber("Speed FB Output", () -> m_speedOutput)
+        .withPosition(3, 3);
+
+        Shuffleboard.getTab("Control")
+        .addNumber("Speed Total Output", () -> m_speedOutput + m_speedFFOutput)
+        .withPosition(4, 3);
 
         Shuffleboard.getTab("Control")
         .addNumber("Speed Setpoint", () -> m_speedSetpoint)
-        .withPosition(6, 1);
+        .withPosition(5, 3);
 
         Shuffleboard.getTab("Control")
-        .addNumber("Speed Encoder", () -> m_encoder.getRate() * 60)
-        .withPosition(0, 3);
+        .addNumber("Speed Sensor", () -> m_encoder.getRate() * 60)
+        .withPosition(4, 2);
     }
 
     public void setMotorStates(double shooterWheel, double intake){
@@ -168,8 +179,8 @@ public class ShooterSubsystem extends SubsystemBase{
     public void setSpeedSetpoint(double setpoint) {
         if (setpoint < 0) {
             setpoint = 0;
-        } else if (setpoint > 3600) {
-            setpoint = 3600;
+        } else if (setpoint > 3800) {
+            setpoint = 3800;
         }
         m_speedSetpoint = setpoint;
     }
@@ -181,13 +192,16 @@ public class ShooterSubsystem extends SubsystemBase{
         if (m_enableSpeedEntry.getBoolean(false)) {
             speedSetpoint = m_speedEntry.getDouble(0);
         }
+        double speedFF = m_speedFeedForward.calculate(speedSetpoint);
+        m_speedFFOutput = speedFF;
         if (m_speedController.getSetpoint() != speedSetpoint)
         {
             m_speedController.setSetpoint(speedSetpoint);
         }
-        m_speedOutput = m_speedController.calculate(m_encoder.getRate() * 60);
+        double speedOutput = m_speedController.calculate(m_encoder.getRate() * 60);
+        m_speedOutput = speedOutput;
         if (m_enableSpeedEntry.getBoolean(false)) {
-            wheelSpeed = m_speedOutput;
+            wheelSpeed = speedOutput + speedFF;
         }
         m_rightShooterWheel.set(ControlMode.PercentOutput, wheelSpeed);
         m_leftShooterWheel.set(ControlMode.PercentOutput, -wheelSpeed);

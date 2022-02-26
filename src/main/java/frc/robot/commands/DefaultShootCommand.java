@@ -70,10 +70,10 @@ public class DefaultShootCommand extends CommandBase {
             intakeWheels = 0;
         }else if(in){
             intakeWheels = -0.25;
-            shooterWheels = -0.4;
+            shooterWheels = -1.0;
         }else if(out){
             intakeWheels = 0.25;
-            shooterWheels = 0.4;
+            shooterWheels = 1.0;
         }
 
         m_subsystem.setMotorStates(shooterWheels, intakeWheels);
