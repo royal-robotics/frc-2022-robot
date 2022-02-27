@@ -48,7 +48,7 @@ public class DefaultShootCommand extends CommandBase {
             ()-> controller.getLeftTrigger().get(),
             ()-> controller.getX().get(),
             ()-> controller.getY().get(),
-            ()-> controller.getB().get(),
+            ()-> controller.getStart().get(),
             ()-> controller.getRightBumper().get(),
             ()-> controller.getLeftBumper().get());
     }
@@ -69,10 +69,10 @@ public class DefaultShootCommand extends CommandBase {
         if(in && out){
             intakeWheels = 0;
         }else if(in){
-            intakeWheels = -0.25;
+            intakeWheels = -0.5;
             shooterWheels = -1.0;
         }else if(out){
-            intakeWheels = 0.25;
+            intakeWheels = 0.5;
             shooterWheels = 1.0;
         }
 

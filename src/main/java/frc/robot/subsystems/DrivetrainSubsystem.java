@@ -24,10 +24,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     // Based on the absolute position of the encoders, use this procedure to calculate:
     // https://github.com/SwerveDriveSpecialties/swerve-template#setting-up-module-offsets
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(324.13787841796875);
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(35.760498046875);
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(202.05230712890625);
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(146.77734375);
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(28.4808349609375);
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(36.1175537109375);
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(173.84490966796875);
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(156.78863525390625);
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 3;
@@ -90,6 +90,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public Pose2d m_pose = new Pose2d();
     public Pose2d getPose(){
         return m_pose;
+    }
+    public void resetPose(Pose2d pose) {
+        m_pose = pose;
     }
 
     // These are our modules. We initialize them in the constructor.

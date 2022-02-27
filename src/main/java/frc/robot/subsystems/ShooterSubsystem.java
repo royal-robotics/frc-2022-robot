@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
@@ -32,8 +33,8 @@ public class ShooterSubsystem extends SubsystemBase{
 
     public final double TOP_ANGLE = -21;
     public final double BOTTOM_ANGLE = 134;
-    public final double TOP_VOLTAGE = 2.787;
-    public final double BOTTOM_VOLTAGE = 2.583;
+    public final double TOP_VOLTAGE = 2.717;
+    public final double BOTTOM_VOLTAGE = 2.506;
 
     private double scale = (BOTTOM_ANGLE - TOP_ANGLE) / (TOP_VOLTAGE - BOTTOM_VOLTAGE);
     private double offset = scale * TOP_VOLTAGE + TOP_ANGLE;
@@ -60,14 +61,16 @@ public class ShooterSubsystem extends SubsystemBase{
     private Encoder m_encoder;
 
     private double m_angleOutput;
-    private double m_angleSetpoint = 45;
+    private double m_angleSetpoint = -20;
     private double m_speedFFOutput;
     private double m_speedOutput;
     private double m_speedSetpoint;
 
-    private PIDController m_angleController = new PIDController(0.01, 0, 0);
-    private SimpleMotorFeedforward m_speedFeedForward = new SimpleMotorFeedforward(0.00002, 0.00026);
-    private PIDController m_speedController = new PIDController(0.001, 0, 0);
+    private PIDController m_angleController;
+    private SimpleMotorFeedforward m_speedFeedForward;
+    private PIDController m_speedController;
+
+    
 
     public ShooterSubsystem(){
         m_shooterAngle = new CANSparkMax(SHOOTER_ANGLE_MOTOR, MotorType.kBrushless);
@@ -78,22 +81,26 @@ public class ShooterSubsystem extends SubsystemBase{
         m_extendIntake = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, EXTEND_INTAKE_LEFT, EXTEND_INTAKE_RIGHT);
         m_kicker = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, KICKER_LEFT, KICKER_RIGHT);
 
-        m_speedEntry = Shuffleboard.getTab("Control")
+        m_angleController = new PIDController(0.01, 0, 0);
+        m_speedFeedForward = new SimpleMotorFeedforward(0.00002, 0.00026);
+        m_speedController = new PIDController(0.001, 0, 0);
+
+        m_speedEntry = Shuffleboard.getTab("Shooter")
             .add("Wheel Speed", 0)
             .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(Map.of("min", 0, "max", 3800, "block increment", 50))
+            .withProperties(Map.of("min", 0, "max", 5600, "block increment", 50))
             .withPosition(2, 0)
             .withSize(2, 2)
             .getEntry();
 
-        m_enableSpeedEntry = Shuffleboard.getTab("Control")
+        m_enableSpeedEntry = Shuffleboard.getTab("Shooter")
             .add("Enable Wheel Speed", false)
             .withWidget(BuiltInWidgets.kToggleButton)
             .withPosition(2, 2)
             .withSize(2, 1)
             .getEntry();
 
-        m_angleEntry = Shuffleboard.getTab("Control")
+        m_angleEntry = Shuffleboard.getTab("Shooter")
             .add("Wheel Angle", 0)
             .withWidget(BuiltInWidgets.kNumberSlider)
             .withProperties(Map.of("min", -20, "max", 130, "block increment", 1))
@@ -101,7 +108,7 @@ public class ShooterSubsystem extends SubsystemBase{
             .withSize(2, 2)
             .getEntry();
 
-        m_enableAngleEntry = Shuffleboard.getTab("Control")
+        m_enableAngleEntry = Shuffleboard.getTab("Shooter")
             .add("Enable Wheel Angle", false)
             .withWidget(BuiltInWidgets.kToggleButton)
             .withPosition(0, 2)
@@ -112,41 +119,58 @@ public class ShooterSubsystem extends SubsystemBase{
         m_encoder = new Encoder(10, 11, true);
         m_encoder.setDistancePerPulse(0.00390625);
 
-        Shuffleboard.getTab("Control")
+        Shuffleboard.getTab("Shooter")
         .addNumber("Wheel Angle Sensor", () -> m_analogPotentiometer.getAverageVoltage() * -scale + offset)
         .withPosition(4, 0);
 
-        Shuffleboard.getTab("Control")
+        Shuffleboard.getTab("Shooter")
         .addNumber("Wheel Angle Sensor Raw", () -> m_analogPotentiometer.getAverageVoltage())
         .withPosition(4, 1);
 
-        Shuffleboard.getTab("Control")
+        Shuffleboard.getTab("Shooter")
         .addNumber("Angle Output", () -> m_angleOutput)
         .withPosition(0, 3);
 
-        Shuffleboard.getTab("Control")
+        Shuffleboard.getTab("Shooter")
         .addNumber("Angle Setpoint", () -> m_angleSetpoint)
         .withPosition(1, 3);
 
-        Shuffleboard.getTab("Control")
+        Shuffleboard.getTab("Shooter")
         .addNumber("Speed FF Output", () -> m_speedFFOutput)
         .withPosition(2, 3);
 
-        Shuffleboard.getTab("Control")
+        Shuffleboard.getTab("Shooter")
         .addNumber("Speed FB Output", () -> m_speedOutput)
         .withPosition(3, 3);
 
-        Shuffleboard.getTab("Control")
+        Shuffleboard.getTab("Shooter")
         .addNumber("Speed Total Output", () -> m_speedOutput + m_speedFFOutput)
         .withPosition(4, 3);
 
-        Shuffleboard.getTab("Control")
+        Shuffleboard.getTab("Shooter")
         .addNumber("Speed Setpoint", () -> m_speedSetpoint)
         .withPosition(5, 3);
 
-        Shuffleboard.getTab("Control")
+        Shuffleboard.getTab("Shooter")
         .addNumber("Speed Sensor", () -> m_encoder.getRate() * 60)
         .withPosition(4, 2);
+
+        Shuffleboard.getTab("Camera")
+        .addNumber("tv", () ->  NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0))
+        .withPosition(0, 0);
+
+        Shuffleboard.getTab("Camera")
+        .addNumber("tx", () -> NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0))
+        .withPosition(1, 0);
+
+        Shuffleboard.getTab("Camera")
+        .addNumber("ty", () -> NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0))
+        .withPosition(2, 0);
+
+        Shuffleboard.getTab("Camera")
+        .addNumber("ta", () -> NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0))
+        .withPosition(3, 0);
+
     }
 
     public void setMotorStates(double shooterWheel, double intake){
@@ -200,7 +224,7 @@ public class ShooterSubsystem extends SubsystemBase{
         }
         double speedOutput = m_speedController.calculate(m_encoder.getRate() * 60);
         m_speedOutput = speedOutput;
-        if (m_enableSpeedEntry.getBoolean(false)) {
+        if (wheelSpeed == 0) {
             wheelSpeed = speedOutput + speedFF;
         }
         m_rightShooterWheel.set(ControlMode.PercentOutput, wheelSpeed);

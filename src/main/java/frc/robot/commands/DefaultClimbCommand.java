@@ -28,7 +28,7 @@ public class DefaultClimbCommand extends CommandBase {
         this(
             subsystem,
             ()-> -controller.getRightX().get(),
-            ()-> controller.getRightY().get() * 0.5);
+            ()-> controller.getRightY().get());
     }
 
     @Override
@@ -36,6 +36,15 @@ public class DefaultClimbCommand extends CommandBase {
 
     @Override
     public void execute() {
+
+        double AnglesetpointChange = m_climberAngleSupplier.getAsDouble();
+        double newAngleSetpoint = m_subsystem.getAngleSetpoint() + AnglesetpointChange;
+        m_subsystem.setAngleSetpoint(newAngleSetpoint);
+
+        double setpointDistance = m_climberSupplier.getAsDouble();
+        double newDistanceSetpoint = m_subsystem.getDistanceSetpoint() + setpointDistance;
+        m_subsystem.setDistanceSetpoint(newDistanceSetpoint);
+
         double climber = m_climberSupplier.getAsDouble();
         double climberAngle = m_climberAngleSupplier.getAsDouble() * 0.25;
         m_subsystem.setMotorStates(climber, climberAngle);

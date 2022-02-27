@@ -27,15 +27,16 @@ public class RobotContainer {
     private static final int PRIMARY_CONTROLLER_PORT = 0;
     private static final int SECONDARY_CONTROLLER_PORT = 1;
 
+    // private final XboxController m_controller = new XboxController(PRIMARY_CONTROLLER_PORT);
+    private final StickController m_controller = new StickController(PRIMARY_CONTROLLER_PORT);
+    private final XboxController m_operator = new XboxController(SECONDARY_CONTROLLER_PORT);
+
     private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
     private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
     private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
 
     private final PickupCommand m_pickupCommand = new PickupCommand(m_shooterSubsystem);
-
-   // private final XboxController m_controller = new XboxController(PRIMARY_CONTROLLER_PORT);
-   private final StickController m_controller = new StickController(PRIMARY_CONTROLLER_PORT);
-   private final XboxController m_operator = new XboxController(SECONDARY_CONTROLLER_PORT);
+    private final ShootCommand m_shootCommand = new ShootCommand(m_shooterSubsystem, m_drivetrainSubsystem, m_operator);
 
     public RobotContainer() {
         m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(m_drivetrainSubsystem, m_controller));
@@ -59,6 +60,16 @@ public class RobotContainer {
         m_operator.getA().whenReleased(
             () -> m_pickupCommand.cancel()
         );
+        m_operator.getB().whenPressed(
+            () -> m_shootCommand.schedule()
+        );
+        m_operator.getB().whenReleased(
+            () -> m_shootCommand.cancel()
+        );
+        if(m_operator.getRightTrigger().get()>0){
+            m_climberSubsystem.resetEncoder();
+        }
+        
     }
 
     public Command getAutonomousCommand() {
@@ -66,6 +77,7 @@ public class RobotContainer {
         PIDController x_control = new PIDController(0.2, 0, 0);
         PIDController y_control = new PIDController(0.2, 0, 0);
         ProfiledPIDController angle_control = new ProfiledPIDController(15, 0, 0, new TrapezoidProfile.Constraints(DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5));
+        m_drivetrainSubsystem.resetPose(examplePath.getInitialPose());
         return new PPSwerveControllerCommand(examplePath,() -> m_drivetrainSubsystem.getPose(),m_drivetrainSubsystem.getKinematics(),x_control,y_control, angle_control, (SwerveModuleState[] states) -> m_drivetrainSubsystem.setModuleStates(states),m_drivetrainSubsystem);
     }
 }

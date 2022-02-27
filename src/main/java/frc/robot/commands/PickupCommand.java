@@ -21,7 +21,7 @@ public class PickupCommand extends CommandBase {
     @Override
     public void execute() {
         m_shooterSubsystem.setAngleSetpoint(118);
-        m_shooterSubsystem.setMotorStates(-1.0, -0.25);
+        m_shooterSubsystem.setMotorStates(-1.0, -0.5);
         m_shooterSubsystem.setSolenoidStates(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kForward);
     }
 
