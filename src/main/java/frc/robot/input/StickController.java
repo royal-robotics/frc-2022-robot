@@ -11,6 +11,7 @@ public final class StickController {
     private final Button t2;
     private final Button c;
     private final Button mode;
+    //private final Button trigger;
 
     private final Axis forwardAxis;
     private final Axis rotateAxis;

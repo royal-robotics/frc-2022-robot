@@ -39,12 +39,14 @@ public class ClimberSubsystem extends SubsystemBase{
     public final double TOP_VOLTAGE = 2.35;
     public final double BOTTOM_VOLTAGE = 1.76;
 
+    public final double TOP_DISTANCE = 32;
+
     private double scale = (BOTTOM_ANGLE - TOP_ANGLE) / (TOP_VOLTAGE - BOTTOM_VOLTAGE);
     private double offset = scale * TOP_VOLTAGE + TOP_ANGLE;
 
     private AnalogInput m_analogPotentiometer;
     private Encoder m_encoder;
-    
+
     private PIDController m_angleController;
     private PIDController m_distanceController;
 
@@ -60,13 +62,13 @@ public class ClimberSubsystem extends SubsystemBase{
         m_leftClimber = new CANSparkMax(LEFT_CLIMBER_MOTOR, MotorType.kBrushless);
         m_rightClimber = new CANSparkMax(RIGHT_CLIMBER_MOTOR, MotorType.kBrushless);
         m_climberAngle = new CANSparkMax(CLIMBER_ANGLE_MOTOR, MotorType.kBrushless);
-        
+
         m_analogPotentiometer = new AnalogInput(1);
         m_encoder = new Encoder(12, 13, false);
         m_encoder.setDistancePerPulse(0.02360515021);
-        
-        m_angleController = new PIDController(0.01, 0, 0);
-        m_distanceController = new PIDController(0.1, 0, 0);
+
+        m_angleController = new PIDController(0.05, 0, 0);
+        m_distanceController = new PIDController(0.5, 0, 0);
 
         Shuffleboard.getTab("Climber")
         .addNumber("Potentiometer", () -> m_analogPotentiometer.getAverageVoltage() * -scale + offset)
@@ -81,7 +83,7 @@ public class ClimberSubsystem extends SubsystemBase{
         m_distanceEntry = Shuffleboard.getTab("Climber")
             .add("Climber Distance", 0)
             .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(Map.of("min", 0, "max", 1, "block increment", 0.1))
+            .withProperties(Map.of("min", 0, "max", TOP_DISTANCE, "block increment", 1))
             .withPosition(2, 0)
             .withSize(2, 2)
             .getEntry();
@@ -145,21 +147,17 @@ public class ClimberSubsystem extends SubsystemBase{
         } else if (setpoint > TOP_ANGLE) {
             setpoint = TOP_ANGLE;
         }
-        
-        //Top = 2.419433346
-        //Bottom = 2.762450889
+
         m_angleSetpoint = setpoint;
     }
 
     public void setDistanceSetpoint(double setpoint) {
          if (setpoint < 0) {
              setpoint = 0;
-         } else if (setpoint > 32) {
-             setpoint = 32;
+         } else if (setpoint > TOP_DISTANCE) {
+             setpoint = TOP_DISTANCE;
          }
-         
-        //Top = -17
-        //Bottom = 53
+
          m_distanceSetpoint = setpoint;
      }
 
@@ -167,48 +165,49 @@ public class ClimberSubsystem extends SubsystemBase{
         return m_angleSetpoint;
      }
 
-     public double getDistanceSetpoint(){
+     public double getAngle() {
+         return m_analogPotentiometer.getAverageVoltage() * -scale + offset;
+     }
+
+     public double getDistanceSetpoint() {
          return m_distanceSetpoint;
      }
 
-
-
-
+     public double getDistance() {
+        return m_encoder.getDistance();
+     }
 
     @Override
     public void periodic() {
-        //double climbSpeed = m_climberState;
-        //m_leftClimber.set(climbSpeed);
-        //m_rightClimber.set(-climbSpeed);
+        double climbSpeed = m_climberState;
+        m_leftClimber.set(climbSpeed);
+        m_rightClimber.set(-climbSpeed);
 
-        //m_climberAngle.set(m_climberAngleState);
-
+        m_climberAngle.set(m_climberAngleState);
 
         double angleSetpoint = m_angleSetpoint;
         if (m_enableAngleEntry.getBoolean(false)) {
             angleSetpoint = m_angleEntry.getDouble(0);
         }
-        
+
         if (m_angleController.getSetpoint() != angleSetpoint)
         {
             m_angleController.setSetpoint(angleSetpoint);
         }
         m_angleOutput = m_angleController.calculate(m_analogPotentiometer.getAverageVoltage() * -scale + offset);
-        m_climberAngle.set(m_angleOutput);
-
+        //m_climberAngle.set(m_angleOutput);
 
         double distanceSetpoint = m_distanceSetpoint;
         if (m_enableDistanceEntry.getBoolean(false)) {
             distanceSetpoint = m_distanceEntry.getDouble(0);
         }
-        
+
         if (m_distanceController.getSetpoint() != distanceSetpoint)
         {
             m_distanceController.setSetpoint(distanceSetpoint);
         }
         m_distanceOutput = m_distanceController.calculate(m_encoder.getDistance());
-        m_leftClimber.set(m_distanceOutput);
-        m_rightClimber.set(-m_distanceOutput);
-        
+        //m_leftClimber.set(m_distanceOutput);
+        //m_rightClimber.set(-m_distanceOutput);
     }
 }

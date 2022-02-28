@@ -15,18 +15,17 @@ public class ShootCommand extends CommandBase {
 
     private final double TY_CLOSE = 20;
     private final double TY_FAR = 4;
-    private final double RPM_CLOSE = 3400;
-    private final double RPM_FAR = 4400;
+    private final double RPM_CLOSE = 3500;
+    private final double RPM_FAR = 4500;
 
     private final double scale = (RPM_FAR - RPM_CLOSE) / (TY_FAR - TY_CLOSE);
     private final double offset = scale * TY_FAR + RPM_FAR;
 
     public ShootCommand(ShooterSubsystem shootSystem, DrivetrainSubsystem driveSystem, XboxController controller) {
         m_shooterSubsystem = shootSystem;
-        addRequirements(shootSystem);
         m_drivetrainSubsystem = driveSystem;
-        addRequirements(driveSystem);
         m_controller = controller;
+        addRequirements(shootSystem, driveSystem);
     }
 
     @Override
@@ -38,7 +37,7 @@ public class ShootCommand extends CommandBase {
     public void execute() {
         m_shooterSubsystem.setAngleSetpoint(20);
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
-        if (tv != 0) {
+        if (tv != 0 && m_shooterSubsystem.atAngleSetpoint()) {
             double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
             double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
             double rpm = ty * scale + offset;

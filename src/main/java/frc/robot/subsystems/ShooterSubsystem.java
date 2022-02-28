@@ -39,6 +39,8 @@ public class ShooterSubsystem extends SubsystemBase{
     private double scale = (BOTTOM_ANGLE - TOP_ANGLE) / (TOP_VOLTAGE - BOTTOM_VOLTAGE);
     private double offset = scale * TOP_VOLTAGE + TOP_ANGLE;
 
+    public final double RPM_TOP = 5600;
+
     private final CANSparkMax m_shooterAngle;
     private final TalonSRX m_rightShooterWheel;
     private final TalonSRX m_leftShooterWheel;
@@ -70,8 +72,6 @@ public class ShooterSubsystem extends SubsystemBase{
     private SimpleMotorFeedforward m_speedFeedForward;
     private PIDController m_speedController;
 
-    
-
     public ShooterSubsystem(){
         m_shooterAngle = new CANSparkMax(SHOOTER_ANGLE_MOTOR, MotorType.kBrushless);
         m_rightShooterWheel = new TalonSRX(RIGHT_SHOOTER_WHEEL_MOTOR);
@@ -83,12 +83,15 @@ public class ShooterSubsystem extends SubsystemBase{
 
         m_angleController = new PIDController(0.01, 0, 0);
         m_speedFeedForward = new SimpleMotorFeedforward(0.00002, 0.00026);
-        m_speedController = new PIDController(0.001, 0, 0);
+        m_speedController = new PIDController(0.002, 0, 0);
+
+        m_angleController.setTolerance(2);
+        m_speedController.setTolerance(100);
 
         m_speedEntry = Shuffleboard.getTab("Shooter")
             .add("Wheel Speed", 0)
             .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(Map.of("min", 0, "max", 5600, "block increment", 50))
+            .withProperties(Map.of("min", 0, "max", RPM_TOP, "block increment", 50))
             .withPosition(2, 0)
             .withSize(2, 2)
             .getEntry();
@@ -103,7 +106,7 @@ public class ShooterSubsystem extends SubsystemBase{
         m_angleEntry = Shuffleboard.getTab("Shooter")
             .add("Wheel Angle", 0)
             .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(Map.of("min", -20, "max", 130, "block increment", 1))
+            .withProperties(Map.of("min", TOP_ANGLE, "max", BOTTOM_ANGLE, "block increment", 1))
             .withPosition(0, 0)
             .withSize(2, 2)
             .getEntry();
@@ -188,12 +191,20 @@ public class ShooterSubsystem extends SubsystemBase{
     }
 
     public void setAngleSetpoint(double setpoint) {
-        if (setpoint < -20) {
-            setpoint = -20;
-        } else if (setpoint > 135) {
-            setpoint = 135;
+        if (setpoint < TOP_ANGLE) {
+            setpoint = TOP_ANGLE;
+        } else if (setpoint > BOTTOM_ANGLE) {
+            setpoint = BOTTOM_ANGLE;
         }
         m_angleSetpoint = setpoint;
+    }
+
+    public boolean atAngleSetpoint() {
+        return m_angleController.atSetpoint();
+    }
+
+    public double getAngle() {
+        return m_analogPotentiometer.getAverageVoltage() * -scale + offset;
     }
 
     public double getSpeedSetpoint() {
@@ -203,10 +214,14 @@ public class ShooterSubsystem extends SubsystemBase{
     public void setSpeedSetpoint(double setpoint) {
         if (setpoint < 0) {
             setpoint = 0;
-        } else if (setpoint > 3800) {
-            setpoint = 3800;
+        } else if (setpoint > RPM_TOP) {
+            setpoint = RPM_TOP;
         }
         m_speedSetpoint = setpoint;
+    }
+
+    public boolean atSpeedSetpoint() {
+        return m_speedController.atSetpoint();
     }
 
     @Override
@@ -224,7 +239,7 @@ public class ShooterSubsystem extends SubsystemBase{
         }
         double speedOutput = m_speedController.calculate(m_encoder.getRate() * 60);
         m_speedOutput = speedOutput;
-        if (wheelSpeed == 0) {
+        if (wheelSpeed == 0 && speedSetpoint != 0) {
             wheelSpeed = speedOutput + speedFF;
         }
         m_rightShooterWheel.set(ControlMode.PercentOutput, wheelSpeed);

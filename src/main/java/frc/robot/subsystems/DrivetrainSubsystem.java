@@ -24,10 +24,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     // Based on the absolute position of the encoders, use this procedure to calculate:
     // https://github.com/SwerveDriveSpecialties/swerve-template#setting-up-module-offsets
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(28.4808349609375);
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(36.1175537109375);
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(173.84490966796875);
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(156.78863525390625);
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(333.457);
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(42.188);
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(174.806);
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(162.419);
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 3;
@@ -178,6 +178,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public Rotation2d getGyroscopeRotation() {
         return Rotation2d.fromDegrees(m_pigeon.getFusedHeading());
+    }
+
+    public void setGyroscope(double angle) {
+        m_pigeon.setFusedHeading(angle);
     }
 
     public void drive(ChassisSpeeds chassisSpeeds) {

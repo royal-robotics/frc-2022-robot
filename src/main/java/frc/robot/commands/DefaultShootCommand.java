@@ -79,7 +79,7 @@ public class DefaultShootCommand extends CommandBase {
         m_subsystem.setMotorStates(shooterWheels, intakeWheels);
 
         double setpointChange = m_shooterAngleSupplier.getAsDouble() * 2;
-        double newSetpoint = m_subsystem.getAngleSetpoint() + setpointChange;
+        double newSetpoint = m_subsystem.getAngle() + setpointChange;
         m_subsystem.setAngleSetpoint(newSetpoint);
 
         DoubleSolenoid.Value extendIntake = m_extendIntakeSupplier.getAsBoolean() ?

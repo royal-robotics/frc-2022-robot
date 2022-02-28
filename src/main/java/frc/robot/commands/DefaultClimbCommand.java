@@ -36,14 +36,17 @@ public class DefaultClimbCommand extends CommandBase {
 
     @Override
     public void execute() {
+        double angleSetpointChange = m_climberAngleSupplier.getAsDouble();
+        if (angleSetpointChange != 0) {
+            double newAngleSetpoint = m_subsystem.getAngle() + angleSetpointChange;
+            m_subsystem.setAngleSetpoint(newAngleSetpoint);
+        }
 
-        double AnglesetpointChange = m_climberAngleSupplier.getAsDouble();
-        double newAngleSetpoint = m_subsystem.getAngleSetpoint() + AnglesetpointChange;
-        m_subsystem.setAngleSetpoint(newAngleSetpoint);
-
-        double setpointDistance = m_climberSupplier.getAsDouble();
-        double newDistanceSetpoint = m_subsystem.getDistanceSetpoint() + setpointDistance;
-        m_subsystem.setDistanceSetpoint(newDistanceSetpoint);
+        double distanceSetpointChange = m_climberSupplier.getAsDouble() * 2;
+        if (distanceSetpointChange != 0) {
+            double newDistanceSetpoint = m_subsystem.getDistance() + distanceSetpointChange;
+            m_subsystem.setDistanceSetpoint(newDistanceSetpoint);
+        }
 
         double climber = m_climberSupplier.getAsDouble();
         double climberAngle = m_climberAngleSupplier.getAsDouble() * 0.25;
