@@ -11,7 +11,7 @@ public final class StickController {
     private final Button t2;
     private final Button c;
     private final Button mode;
-    //private final Button trigger;
+    private final Button trigger;
 
     private final Axis forwardAxis;
     private final Axis rotateAxis;
@@ -24,6 +24,7 @@ public final class StickController {
         t2 = new JoystickButton(joystick, 10);
         c = new JoystickButton(joystick,5);
         mode = new JoystickButton(joystick,24);
+        trigger = new JoystickButton(joystick, 1);
 
         forwardAxis = new Axis(joystick, 1);
         rotateAxis = new Axis(joystick, 2);
@@ -55,5 +56,9 @@ public final class StickController {
 
     public Button getMode(){
         return mode;
+    }
+
+    public Button getTrigger() {
+        return trigger;
     }
 }

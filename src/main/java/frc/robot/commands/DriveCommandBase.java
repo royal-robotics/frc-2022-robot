@@ -3,6 +3,8 @@ package frc.robot.commands;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public abstract class DriveCommandBase extends CommandBase {
@@ -10,16 +12,19 @@ public abstract class DriveCommandBase extends CommandBase {
     private final DoubleSupplier m_translationXSupplier;
     private final DoubleSupplier m_translationYSupplier;
     private final DoubleSupplier m_rotationSupplier;
+    private final BooleanSupplier m_slowSupplier;
 
     public DriveCommandBase(
             DrivetrainSubsystem subsystem,
             DoubleSupplier translationXSupplier,
             DoubleSupplier translationYSupplier,
-            DoubleSupplier rotationSupplier) {
+            DoubleSupplier rotationSupplier,
+            BooleanSupplier slowSupplier) {
         m_subsystem = subsystem;
         m_translationXSupplier = translationXSupplier;
         m_translationYSupplier = translationYSupplier;
         m_rotationSupplier = rotationSupplier;
+        m_slowSupplier = slowSupplier;
 
         addRequirements(subsystem);
     }
@@ -29,16 +34,29 @@ public abstract class DriveCommandBase extends CommandBase {
 
     @Override
     public void execute() {
-        m_subsystem.drive(
-            ChassisSpeeds.fromFieldRelativeSpeeds(
-                m_translationXSupplier.getAsDouble(),
-                m_translationYSupplier.getAsDouble(),
-                m_rotationSupplier.getAsDouble(),
-                m_subsystem.getGyroscopeRotation())
-            /*new ChassisSpeeds(
-                m_translationXSupplier.getAsDouble(),
-                m_translationYSupplier.getAsDouble(),
-                m_rotationSupplier.getAsDouble())*/);
+        if (m_slowSupplier.getAsBoolean()) {
+            m_subsystem.drive(
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                    m_translationXSupplier.getAsDouble() * 0.25,
+                    m_translationYSupplier.getAsDouble() * 0.25,
+                    m_rotationSupplier.getAsDouble() * 0.25,
+                    m_subsystem.getGyroscopeRotation())
+                /*new ChassisSpeeds(
+                    m_translationXSupplier.getAsDouble(),
+                    m_translationYSupplier.getAsDouble(),
+                    m_rotationSupplier.getAsDouble())*/);
+        } else {
+            m_subsystem.drive(
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                    m_translationXSupplier.getAsDouble(),
+                    m_translationYSupplier.getAsDouble(),
+                    m_rotationSupplier.getAsDouble(),
+                    m_subsystem.getGyroscopeRotation())
+                /*new ChassisSpeeds(
+                    m_translationXSupplier.getAsDouble(),
+                    m_translationYSupplier.getAsDouble(),
+                    m_rotationSupplier.getAsDouble())*/);
+        }
     }
 
     @Override

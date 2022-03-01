@@ -38,8 +38,7 @@ public class RobotContainer {
     private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
 
     private final PickupCommand m_pickupCommand = new PickupCommand(m_shooterSubsystem);
-    //private final ShootCommand m_shootCommand = new ShootCommand(m_shooterSubsystem, m_drivetrainSubsystem, m_operator, m_controller);
-    private final ShootCommand m_shootCommand = new ShootCommand(m_shooterSubsystem, m_drivetrainSubsystem, m_operator);
+    private final ShootCommand m_shootCommand = new ShootCommand(m_shooterSubsystem, m_drivetrainSubsystem, m_operator, m_controller);
 
     public RobotContainer() {
         m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(m_drivetrainSubsystem, m_controller));
@@ -76,8 +75,10 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         PathPlannerTrajectory examplePath = PathPlanner.loadPath("TurnPath", DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5);
-        PIDController x_control = new PIDController(0.5, 0, 0);
-        PIDController y_control = new PIDController(0.5, 0, 0);
+        //PIDController x_control = new PIDController(0.5, 0, 0);
+        //PIDController y_control = new PIDController(0.5, 0, 0);
+        PIDController x_control = new PIDController(0, 0, 0);
+        PIDController y_control = new PIDController(0, 0, 0);
         ProfiledPIDController angle_control = new ProfiledPIDController(1, 0, 0, new TrapezoidProfile.Constraints(DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5));
         angle_control.enableContinuousInput(-Math.PI, Math.PI);
         m_drivetrainSubsystem.resetPose(examplePath.getInitialPose());

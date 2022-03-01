@@ -10,6 +10,7 @@ public class DefaultDriveCommand extends DriveCommandBase {
             subsystem,
             ()-> -controller.getForwardAxis().get() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             ()-> -controller.getStrafeAxis().get() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            ()-> -controller.getRotateAxis().get(0.4) * 0.5 * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND);
+            ()-> -controller.getRotateAxis().get(0.4) * 0.5 * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+            ()-> controller.getTrigger().get());
     }
 }
