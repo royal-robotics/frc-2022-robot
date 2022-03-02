@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.autonomous.AutoModeBase;
+import frc.robot.commands.AutoFollowCommand;
 import frc.robot.commands.AutoPickupCommand;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -26,18 +27,6 @@ public class ShootThenBackup extends AutoModeBase {
 
         this.addCommands(new AutoShootCommand(shooterSubsystem, -21));
         this.addCommands(new AutoPickupCommand(shooterSubsystem));
-
-        PathPlannerTrajectory examplePath = PathPlanner.loadPath("TurnPath", DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5);
-        //PIDController x_control = new PIDController(0.5, 0, 0);
-        //PIDController y_control = new PIDController(0.5, 0, 0);
-        PIDController x_control = new PIDController(0, 0, 0);
-        PIDController y_control = new PIDController(0, 0, 0);
-        ProfiledPIDController angle_control = new ProfiledPIDController(1, 0, 0, new TrapezoidProfile.Constraints(DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5));
-        angle_control.enableContinuousInput(-Math.PI, Math.PI);
-        drivetrainSubsystem.resetPose(examplePath.getInitialPose());
-        drivetrainSubsystem.setGyroscope(examplePath.getInitialPose().getRotation().getDegrees());
-        PPSwerveControllerCommand pathCommand = new PPSwerveControllerCommand(examplePath,() -> drivetrainSubsystem.getPose(),drivetrainSubsystem.getKinematics(),x_control,y_control, angle_control, (SwerveModuleState[] states) -> drivetrainSubsystem.setModuleStates(states),drivetrainSubsystem);
-        this.addCommands(pathCommand);
-        this.addCommands(new InstantCommand(() -> drivetrainSubsystem.drive(new ChassisSpeeds()), drivetrainSubsystem));
+        this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "TurnPath"));
     }
 }
