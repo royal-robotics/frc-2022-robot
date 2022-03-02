@@ -33,17 +33,17 @@ public class RobotContainer {
     private final StickController m_controller = new StickController(PRIMARY_CONTROLLER_PORT);
     private final XboxController m_operator = new XboxController(SECONDARY_CONTROLLER_PORT);
 
-    private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+    public final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
     private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
-    private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
+    public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
-    private final PickupCommand m_pickupCommand = new PickupCommand(m_shooterSubsystem);
-    private final ShootCommand m_shootCommand = new ShootCommand(m_shooterSubsystem, m_drivetrainSubsystem, m_operator, m_controller);
+    private final PickupCommand m_pickupCommand = new PickupCommand(shooterSubsystem);
+    private final ShootCommand m_shootCommand = new ShootCommand(shooterSubsystem, drivetrainSubsystem, m_operator, m_controller);
 
     public RobotContainer() {
-        m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(m_drivetrainSubsystem, m_controller));
+        drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(drivetrainSubsystem, m_controller));
         m_climberSubsystem.setDefaultCommand(new DefaultClimbCommand(m_climberSubsystem, m_operator));
-        m_shooterSubsystem.setDefaultCommand(new DefaultShootCommand(m_shooterSubsystem, m_operator));
+        shooterSubsystem.setDefaultCommand(new DefaultShootCommand(shooterSubsystem, m_operator));
 
 
         configureButtonBindings();
@@ -54,7 +54,7 @@ public class RobotContainer {
         //     () ->  m_drivetrainSubsystem.zeroGyroscope()
         // );
         m_controller.getT1().whenPressed(
-            () -> m_drivetrainSubsystem.zeroGyroscope()
+            () -> drivetrainSubsystem.zeroGyroscope()
         );
         m_operator.getA().whenPressed(
             () -> m_pickupCommand.schedule()
@@ -81,9 +81,9 @@ public class RobotContainer {
         PIDController y_control = new PIDController(0, 0, 0);
         ProfiledPIDController angle_control = new ProfiledPIDController(1, 0, 0, new TrapezoidProfile.Constraints(DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5));
         angle_control.enableContinuousInput(-Math.PI, Math.PI);
-        m_drivetrainSubsystem.resetPose(examplePath.getInitialPose());
-        m_drivetrainSubsystem.setGyroscope(examplePath.getInitialPose().getRotation().getDegrees());
-        PPSwerveControllerCommand pathCommand = new PPSwerveControllerCommand(examplePath,() -> m_drivetrainSubsystem.getPose(),m_drivetrainSubsystem.getKinematics(),x_control,y_control, angle_control, (SwerveModuleState[] states) -> m_drivetrainSubsystem.setModuleStates(states),m_drivetrainSubsystem);
-        return new SequentialCommandGroup(new AutoShootCommand(m_shooterSubsystem, -21), new AutoPickupCommand(m_shooterSubsystem), pathCommand, new InstantCommand(() -> m_drivetrainSubsystem.drive(new ChassisSpeeds()), m_drivetrainSubsystem));
+        drivetrainSubsystem.resetPose(examplePath.getInitialPose());
+        drivetrainSubsystem.setGyroscope(examplePath.getInitialPose().getRotation().getDegrees());
+        PPSwerveControllerCommand pathCommand = new PPSwerveControllerCommand(examplePath,() -> drivetrainSubsystem.getPose(),drivetrainSubsystem.getKinematics(),x_control,y_control, angle_control, (SwerveModuleState[] states) -> drivetrainSubsystem.setModuleStates(states),drivetrainSubsystem);
+        return new SequentialCommandGroup(new AutoShootCommand(shooterSubsystem, -21), new AutoPickupCommand(shooterSubsystem), pathCommand, new InstantCommand(() -> drivetrainSubsystem.drive(new ChassisSpeeds()), drivetrainSubsystem));
     }
 }
