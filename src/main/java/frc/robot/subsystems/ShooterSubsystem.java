@@ -203,6 +203,10 @@ public class ShooterSubsystem extends SubsystemBase{
         return m_angleController.atSetpoint();
     }
 
+    public void setAngleSetpointCurrent(){
+        setAngleSetpoint(getAngle());
+    }
+
     public double getAngle() {
         return m_analogPotentiometer.getAverageVoltage() * -scale + offset;
     }

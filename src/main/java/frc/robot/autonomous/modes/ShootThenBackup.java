@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.autonomous.AutoModeBase;
 import frc.robot.commands.AutoFollowCommand;
@@ -24,9 +25,9 @@ public class ShootThenBackup extends AutoModeBase {
 
         var drivetrainSubsystem = robotContainer.drivetrainSubsystem;
         var shooterSubsystem = robotContainer.shooterSubsystem;
-
+        this.addCommands(new WaitCommand(0.5));
         this.addCommands(new AutoShootCommand(shooterSubsystem, -21));
         this.addCommands(new AutoPickupCommand(shooterSubsystem));
-        this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "TurnPath"));
+        this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "StraightPath"));
     }
 }
