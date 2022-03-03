@@ -76,7 +76,7 @@ public class DefaultShootCommand extends CommandBase {
             shooterWheels = 1.0;
         }
 
-        m_subsystem.setMotorStates(shooterWheels, intakeWheels);
+        m_subsystem.setMotorStates(shooterWheels * m_subsystem.m_speedEntry.getDouble(m_subsystem.RPM_TOP), intakeWheels);
 
         double setpointChange = m_shooterAngleSupplier.getAsDouble() * 2;
         double newSetpoint = m_subsystem.getAngleSetpoint() + setpointChange;

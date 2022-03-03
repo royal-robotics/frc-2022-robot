@@ -4,32 +4,42 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ShooterSubsystem;
 
+import com.ctre.phoenix.time.StopWatch;
+
 public class AutoShootCommand extends CommandBase {
     private final ShooterSubsystem m_shooterSubsystem;
     private final double m_angleSetpoint;
     private boolean end = false;
-    private int endLoops = 0;
+    private final double m_wheelSpeed;
+    private final StopWatch m_stopWatch = new StopWatch();
 
-    public AutoShootCommand(ShooterSubsystem shooterSubsystem, double angleSetpoint) {
+    public AutoShootCommand(ShooterSubsystem shooterSubsystem, double angleSetpoint, double wheelSpeed) {
         m_shooterSubsystem = shooterSubsystem;
         m_angleSetpoint = angleSetpoint;
+        m_wheelSpeed = wheelSpeed;
         addRequirements(shooterSubsystem);
     }
 
     @Override
     public void initialize() {
         m_shooterSubsystem.setAngleSetpoint(m_angleSetpoint);
-        m_shooterSubsystem.setSpeedSetpoint(2900);
+        //m_shooterSubsystem.setSpeedSetpoint(m_wheelSpeed);
     }
 
     @Override
     public void execute() {
-        if (m_shooterSubsystem.atAngleSetpoint() && m_shooterSubsystem.atSpeedSetpoint()) {
-            m_shooterSubsystem.setSolenoidStates(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kReverse);
-            end = true;
+        if(m_shooterSubsystem.atAngleSetpoint()){
+            m_shooterSubsystem.setSpeedSetpoint(m_wheelSpeed);
         }
-        if (end) {
-            endLoops++;
+        if(m_shooterSubsystem.atSpeedSetpoint()){
+            m_stopWatch.start();
+        }
+        if (m_shooterSubsystem.atAngleSetpoint() && m_shooterSubsystem.atSpeedSetpoint() && m_stopWatch.getDurationMs() > 250) {
+            m_shooterSubsystem.setSolenoidStates(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kReverse);
+            if(!end){
+                m_stopWatch.start();
+                end = true;
+            }
         }
     }
 
@@ -41,6 +51,6 @@ public class AutoShootCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return endLoops > 30;
+        return end && m_stopWatch.getDurationMs() > 250;
     }
 }

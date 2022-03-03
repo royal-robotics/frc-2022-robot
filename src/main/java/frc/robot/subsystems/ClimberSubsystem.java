@@ -151,6 +151,10 @@ public class ClimberSubsystem extends SubsystemBase{
         m_angleSetpoint = setpoint;
     }
 
+    public void setAngleSetpointCurrent(){
+        setAngleSetpoint(getAngle());
+    }
+    
     public void setDistanceSetpoint(double setpoint) {
          if (setpoint < 0) {
              setpoint = 0;
@@ -179,11 +183,11 @@ public class ClimberSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        double climbSpeed = m_climberState;
-        m_leftClimber.set(climbSpeed);
-        m_rightClimber.set(-climbSpeed);
+        //double climbSpeed = m_climberState;
+        //m_leftClimber.set(climbSpeed);
+        //m_rightClimber.set(-climbSpeed);
 
-        m_climberAngle.set(m_climberAngleState);
+        //m_climberAngle.set(m_climberAngleState);
 
         double angleSetpoint = m_angleSetpoint;
         if (m_enableAngleEntry.getBoolean(false)) {
@@ -195,7 +199,7 @@ public class ClimberSubsystem extends SubsystemBase{
             m_angleController.setSetpoint(angleSetpoint);
         }
         m_angleOutput = m_angleController.calculate(m_analogPotentiometer.getAverageVoltage() * -scale + offset);
-        //m_climberAngle.set(m_angleOutput);
+        m_climberAngle.set(m_angleOutput);
 
         double distanceSetpoint = m_distanceSetpoint;
         if (m_enableDistanceEntry.getBoolean(false)) {
@@ -207,7 +211,7 @@ public class ClimberSubsystem extends SubsystemBase{
             m_distanceController.setSetpoint(distanceSetpoint);
         }
         m_distanceOutput = m_distanceController.calculate(m_encoder.getDistance());
-        //m_leftClimber.set(m_distanceOutput);
-        //m_rightClimber.set(-m_distanceOutput);
+        m_leftClimber.set(m_distanceOutput);
+        m_rightClimber.set(-m_distanceOutput);
     }
 }

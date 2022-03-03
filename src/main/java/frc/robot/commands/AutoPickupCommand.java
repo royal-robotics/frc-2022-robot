@@ -18,8 +18,8 @@ public class AutoPickupCommand extends CommandBase {
     @Override
     public void initialize() {
         m_shooterSubsystem.setAngleSetpoint(119);
-        m_shooterSubsystem.setMotorStates(-1.0, -0.5);
-        m_shooterSubsystem.setSolenoidStates(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kReverse);
+        m_shooterSubsystem.setMotorStates(-4000, -0.5);
+        m_shooterSubsystem.setSolenoidStates(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kForward);
     }
 
     @Override
@@ -37,6 +37,6 @@ public class AutoPickupCommand extends CommandBase {
     @Override
     public boolean isFinished() {
         
-        return m_shooterSubsystem.atAngleSetpoint() && m_stopWatch.getDurationMs()>1000;
+        return m_shooterSubsystem.atAngleSetpoint() ; //&& m_stopWatch.getDurationMs()>1000;
     }
 }

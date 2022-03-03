@@ -34,7 +34,7 @@ public class RobotContainer {
     private final XboxController m_operator = new XboxController(SECONDARY_CONTROLLER_PORT);
 
     public final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
-    private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
+    public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
     public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
     private final PickupCommand m_pickupCommand = new PickupCommand(shooterSubsystem);
@@ -42,7 +42,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(drivetrainSubsystem, m_controller));
-        m_climberSubsystem.setDefaultCommand(new DefaultClimbCommand(m_climberSubsystem, m_operator));
+        climberSubsystem.setDefaultCommand(new DefaultClimbCommand(climberSubsystem, m_operator));
         shooterSubsystem.setDefaultCommand(new DefaultShootCommand(shooterSubsystem, m_operator));
 
 
@@ -69,10 +69,11 @@ public class RobotContainer {
             () -> m_shootCommand.cancel()
         );
         if(m_operator.getRightTrigger().get()>0){
-            m_climberSubsystem.resetEncoder();
+            climberSubsystem.resetEncoder();
         }
     }
 
+    /* //moved to automonous folder. RIP
     public Command getAutonomousCommand() {
         PathPlannerTrajectory examplePath = PathPlanner.loadPath("TurnPath", DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5);
         //PIDController x_control = new PIDController(0.5, 0, 0);
@@ -84,6 +85,7 @@ public class RobotContainer {
         drivetrainSubsystem.resetPose(examplePath.getInitialPose());
         drivetrainSubsystem.setGyroscope(examplePath.getInitialPose().getRotation().getDegrees());
         PPSwerveControllerCommand pathCommand = new PPSwerveControllerCommand(examplePath,() -> drivetrainSubsystem.getPose(),drivetrainSubsystem.getKinematics(),x_control,y_control, angle_control, (SwerveModuleState[] states) -> drivetrainSubsystem.setModuleStates(states),drivetrainSubsystem);
-        return new SequentialCommandGroup(new AutoShootCommand(shooterSubsystem, -21), new AutoPickupCommand(shooterSubsystem), pathCommand, new InstantCommand(() -> drivetrainSubsystem.drive(new ChassisSpeeds()), drivetrainSubsystem));
+        return new SequentialCommandGroup(new AutoShootCommand(shooterSubsystem, -21, 2900), new AutoPickupCommand(shooterSubsystem), pathCommand, new InstantCommand(() -> drivetrainSubsystem.drive(new ChassisSpeeds()), drivetrainSubsystem));
     }
+    */
 }

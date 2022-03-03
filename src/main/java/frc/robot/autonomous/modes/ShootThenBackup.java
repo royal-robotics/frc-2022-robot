@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
@@ -17,7 +18,6 @@ import frc.robot.autonomous.AutoModeBase;
 import frc.robot.commands.AutoFollowCommand;
 import frc.robot.commands.AutoPickupCommand;
 import frc.robot.commands.AutoShootCommand;
-import frc.robot.subsystems.DrivetrainSubsystem;
 
 public class ShootThenBackup extends AutoModeBase {
     public ShootThenBackup(RobotContainer robotContainer) {
@@ -25,9 +25,13 @@ public class ShootThenBackup extends AutoModeBase {
 
         var drivetrainSubsystem = robotContainer.drivetrainSubsystem;
         var shooterSubsystem = robotContainer.shooterSubsystem;
-        this.addCommands(new WaitCommand(0.5));
-        this.addCommands(new AutoShootCommand(shooterSubsystem, -21));
+        //var parallel = new ParallelCommandGroup(new AutoPickupCommand(shooterSubsystem), new AutoFollowCommand(drivetrainSubsystem, "StraightPath"));
+        this.addCommands(new WaitCommand(.75));
+        this.addCommands(new AutoShootCommand(shooterSubsystem, -21, 2900));
         this.addCommands(new AutoPickupCommand(shooterSubsystem));
         this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "StraightPath"));
+        this.addCommands(new WaitCommand(1));
+        this.addCommands(new AutoShootCommand(shooterSubsystem, -21, 3400));
+        //this.addCommands(parallel);
     }
 }

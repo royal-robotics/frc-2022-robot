@@ -49,12 +49,12 @@ public class ShooterSubsystem extends SubsystemBase{
     private final DoubleSolenoid m_extendIntake;
     private final DoubleSolenoid m_kicker;
 
-    private double m_shooterWheelState = 0;
+    //private double m_shooterWheelState = 0;
     private double m_intakeState = 0;
     private DoubleSolenoid.Value m_extendIntakeState = DoubleSolenoid.Value.kForward;
     private DoubleSolenoid.Value m_kickerState = DoubleSolenoid.Value.kForward;
 
-    private NetworkTableEntry m_speedEntry;
+    public NetworkTableEntry m_speedEntry;
     private NetworkTableEntry m_enableSpeedEntry;
     private NetworkTableEntry m_angleEntry;
     private NetworkTableEntry m_enableAngleEntry;
@@ -96,12 +96,16 @@ public class ShooterSubsystem extends SubsystemBase{
             .withSize(2, 2)
             .getEntry();
 
+        m_speedEntry.setDouble(RPM_TOP);
+
+        /*
         m_enableSpeedEntry = Shuffleboard.getTab("Shooter")
             .add("Enable Wheel Speed", false)
             .withWidget(BuiltInWidgets.kToggleButton)
             .withPosition(2, 2)
             .withSize(2, 1)
             .getEntry();
+        */
 
         m_angleEntry = Shuffleboard.getTab("Shooter")
             .add("Wheel Angle", 0)
@@ -176,8 +180,8 @@ public class ShooterSubsystem extends SubsystemBase{
 
     }
 
-    public void setMotorStates(double shooterWheel, double intake){
-        m_shooterWheelState = shooterWheel;
+    public void setMotorStates(double shooterSetpoint, double intake){
+        setSpeedSetpoint(shooterSetpoint);
         m_intakeState = intake;
     }
 
@@ -216,12 +220,13 @@ public class ShooterSubsystem extends SubsystemBase{
     }
 
     public void setSpeedSetpoint(double setpoint) {
-        if (setpoint < 0) {
-            setpoint = 0;
+        if (setpoint < -RPM_TOP) {
+            m_speedSetpoint = -RPM_TOP;
         } else if (setpoint > RPM_TOP) {
-            setpoint = RPM_TOP;
+            m_speedSetpoint = RPM_TOP;
+        } else {
+            m_speedSetpoint = setpoint;
         }
-        m_speedSetpoint = setpoint;
     }
 
     public boolean atSpeedSetpoint() {
@@ -230,22 +235,29 @@ public class ShooterSubsystem extends SubsystemBase{
 
     @Override
     public void periodic(){
-        double wheelSpeed = m_shooterWheelState;
         double speedSetpoint = m_speedSetpoint;
+        
+        /*
         if (m_enableSpeedEntry.getBoolean(false)) {
             speedSetpoint = m_speedEntry.getDouble(0);
         }
+        */
+
         double speedFF = m_speedFeedForward.calculate(speedSetpoint);
         m_speedFFOutput = speedFF;
         if (m_speedController.getSetpoint() != speedSetpoint)
         {
             m_speedController.setSetpoint(speedSetpoint);
         }
+
         double speedOutput = m_speedController.calculate(m_encoder.getRate() * 60);
         m_speedOutput = speedOutput;
-        if (wheelSpeed == 0 && speedSetpoint != 0) {
-            wheelSpeed = speedOutput + speedFF;
+        double wheelSpeed = speedOutput + speedFF;
+
+        if(speedSetpoint == 0){
+            wheelSpeed = 0;
         }
+
         m_rightShooterWheel.set(ControlMode.PercentOutput, wheelSpeed);
         m_leftShooterWheel.set(ControlMode.PercentOutput, -wheelSpeed);
 
