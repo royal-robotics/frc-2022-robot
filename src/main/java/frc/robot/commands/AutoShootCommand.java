@@ -8,49 +8,55 @@ import com.ctre.phoenix.time.StopWatch;
 
 public class AutoShootCommand extends CommandBase {
     private final ShooterSubsystem m_shooterSubsystem;
-    private final double m_angleSetpoint;
+    private boolean started = false;
     private boolean end = false;
+    private boolean atWheelSpeed = false;
+    private boolean kickerTimeout = false;
     private final double m_wheelSpeed;
-    private final StopWatch m_stopWatch = new StopWatch();
+    private StopWatch kickerStopWatch = null;
+    private StopWatch wheelSpeedTimer = null;
+    private boolean holdWheelSpeed = false;
 
-    public AutoShootCommand(ShooterSubsystem shooterSubsystem, double angleSetpoint, double wheelSpeed) {
+
+    public AutoShootCommand(ShooterSubsystem shooterSubsystem, double wheelSpeed) {
         m_shooterSubsystem = shooterSubsystem;
-        m_angleSetpoint = angleSetpoint;
         m_wheelSpeed = wheelSpeed;
         addRequirements(shooterSubsystem);
     }
 
     @Override
     public void initialize() {
-        m_shooterSubsystem.setAngleSetpoint(m_angleSetpoint);
-        //m_shooterSubsystem.setSpeedSetpoint(m_wheelSpeed);
+        m_shooterSubsystem.setSpeedSetpoint(m_wheelSpeed);
     }
 
     @Override
     public void execute() {
-        if(m_shooterSubsystem.atAngleSetpoint()){
-            m_shooterSubsystem.setSpeedSetpoint(m_wheelSpeed);
+        if(m_shooterSubsystem.atAngleSetpoint()&& !holdWheelSpeed){
+            holdWheelSpeed = true;
+            wheelSpeedTimer = new StopWatch();
+            wheelSpeedTimer.start();
         }
-        if(m_shooterSubsystem.atSpeedSetpoint()){
-            m_stopWatch.start();
-        }
-        if (m_shooterSubsystem.atAngleSetpoint() && m_shooterSubsystem.atSpeedSetpoint() && m_stopWatch.getDurationMs() > 250) {
+
+        if(m_shooterSubsystem.atAngleSetpoint() && !atWheelSpeed && wheelSpeedTimer != null &&wheelSpeedTimer.getDurationMs() > 500){
+            atWheelSpeed = true;
+            kickerStopWatch = new StopWatch();
+            kickerStopWatch.start();
             m_shooterSubsystem.setSolenoidStates(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kReverse);
-            if(!end){
-                m_stopWatch.start();
-                end = true;
-            }
+        }
+
+        if(kickerStopWatch != null && kickerStopWatch.getDurationMs() > 250 && !kickerTimeout){
+            kickerTimeout = true;
+            m_shooterSubsystem.setSolenoidStates(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward);
         }
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_shooterSubsystem.setSpeedSetpoint(0);
-        m_shooterSubsystem.setSolenoidStates(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward);
+
     }
 
     @Override
     public boolean isFinished() {
-        return end && m_stopWatch.getDurationMs() > 250;
+        return kickerTimeout;
     }
 }

@@ -3,6 +3,7 @@ package frc.robot.commands;
 import frc.robot.input.XboxController;
 import frc.robot.subsystems.ClimberSubsystem;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -12,14 +13,17 @@ public class DefaultClimbCommand extends CommandBase {
 
     private final DoubleSupplier m_climberAngleSupplier;
     private final DoubleSupplier m_climberSupplier;
+    private final BooleanSupplier m_enableClimberAngle;
 
     public DefaultClimbCommand(ClimberSubsystem subsystem,
             DoubleSupplier climberAngleSupplier,
-            DoubleSupplier climberSupplier){
+            DoubleSupplier climberSupplier,
+            BooleanSupplier enableClimberAngle){
 
         m_subsystem = subsystem;
         m_climberAngleSupplier = climberAngleSupplier;
         m_climberSupplier = climberSupplier;
+        m_enableClimberAngle = enableClimberAngle;
 
         addRequirements(subsystem);
     }
@@ -27,8 +31,9 @@ public class DefaultClimbCommand extends CommandBase {
     public DefaultClimbCommand(ClimberSubsystem subsystem, XboxController controller) {
         this(
             subsystem,
-            ()-> -controller.getRightX().get(),
-            ()-> controller.getRightY().get());
+            ()-> -controller.getLeftX().get(),
+            ()-> controller.getRightY().get(),
+            ()-> controller.getRightBumper().get());
     }
 
     @Override
@@ -36,11 +41,15 @@ public class DefaultClimbCommand extends CommandBase {
 
     @Override
     public void execute() {
-        double angleSetpointChange = m_climberAngleSupplier.getAsDouble();
-        if (angleSetpointChange != 0) {
-            double newAngleSetpoint = m_subsystem.getAngle() + angleSetpointChange;
-            m_subsystem.setAngleSetpoint(newAngleSetpoint);
+        if(m_enableClimberAngle.getAsBoolean()){
+            
+        double angleSetpointChange = m_climberAngleSupplier.getAsDouble() * 15;
+            if (angleSetpointChange != 0) {
+                double newAngleSetpoint = m_subsystem.getAngle() + angleSetpointChange;
+                m_subsystem.setAngleSetpoint(newAngleSetpoint);
+            }
         }
+        
 
         double distanceSetpointChange = m_climberSupplier.getAsDouble() * 2;
         if (distanceSetpointChange != 0) {

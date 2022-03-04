@@ -17,7 +17,8 @@ public class DefaultShootCommand extends CommandBase {
     private final BooleanSupplier m_intakeSupplier;
     private final BooleanSupplier m_outtakeSupplier;
     private final BooleanSupplier m_reverseWheelsSupplier;
-    private final BooleanSupplier m_extendIntakeSupplier;
+    //private final BooleanSupplier m_extendIntakeSupplier;
+    private final BooleanSupplier m_disableShooterAngle;
     private final BooleanSupplier m_kickerSupplier;
 
     public DefaultShootCommand(ShooterSubsystem subsystem,
@@ -26,7 +27,8 @@ public class DefaultShootCommand extends CommandBase {
             BooleanSupplier intakeSupplier,
             BooleanSupplier outtakeSupplier,
             BooleanSupplier reverseWheelsSupplier,
-            BooleanSupplier extendIntakeSupplier,
+            //BooleanSupplier extendIntakeSupplier,
+            BooleanSupplier disableShooterSupplier,
             BooleanSupplier kickerSupplier){
 
         m_subsystem = subsystem;
@@ -35,7 +37,8 @@ public class DefaultShootCommand extends CommandBase {
         m_intakeSupplier = intakeSupplier;
         m_outtakeSupplier = outtakeSupplier;
         m_reverseWheelsSupplier = reverseWheelsSupplier;
-        m_extendIntakeSupplier = extendIntakeSupplier;
+        //m_extendIntakeSupplier = extendIntakeSupplier;
+        m_disableShooterAngle = disableShooterSupplier;
         m_kickerSupplier = kickerSupplier;
 
         addRequirements(subsystem);
@@ -78,18 +81,25 @@ public class DefaultShootCommand extends CommandBase {
 
         m_subsystem.setMotorStates(shooterWheels * m_subsystem.m_speedEntry.getDouble(m_subsystem.RPM_TOP), intakeWheels);
 
-        double setpointChange = m_shooterAngleSupplier.getAsDouble() * 2;
-        double newSetpoint = m_subsystem.getAngleSetpoint() + setpointChange;
-        m_subsystem.setAngleSetpoint(newSetpoint);
+        if(m_disableShooterAngle.getAsBoolean()==false){
+            double setpointChange = m_shooterAngleSupplier.getAsDouble() * 2;
+            double newSetpoint = m_subsystem.getAngleSetpoint() + setpointChange;
+            
+            m_subsystem.setAngleSetpoint(newSetpoint);
+        }
+        
 
+
+        /*
         DoubleSolenoid.Value extendIntake = m_extendIntakeSupplier.getAsBoolean() ?
             DoubleSolenoid.Value.kReverse :
             DoubleSolenoid.Value.kForward;
+        */
         DoubleSolenoid.Value kicker = m_kickerSupplier.getAsBoolean() ?
             DoubleSolenoid.Value.kReverse :
             DoubleSolenoid.Value.kForward;
 
-        m_subsystem.setSolenoidStates(extendIntake, kicker);
+        m_subsystem.setSolenoidStates(DoubleSolenoid.Value.kForward, kicker);
     }
 
     @Override

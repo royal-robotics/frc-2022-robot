@@ -74,6 +74,7 @@ public class Robot extends TimedRobot {
     }
     m_robotContainer.shooterSubsystem.setAngleSetpointCurrent();
     m_robotContainer.climberSubsystem.setAngleSetpointCurrent();
+    m_robotContainer.climberSubsystem.resetEncoder();
     
 
   }

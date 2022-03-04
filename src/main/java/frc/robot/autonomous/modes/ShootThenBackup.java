@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.autonomous.AutoModeBase;
 import frc.robot.commands.AutoFollowCommand;
+import frc.robot.commands.AutoMoveShooter;
 import frc.robot.commands.AutoPickupCommand;
 import frc.robot.commands.AutoShootCommand;
 
@@ -25,13 +26,14 @@ public class ShootThenBackup extends AutoModeBase {
 
         var drivetrainSubsystem = robotContainer.drivetrainSubsystem;
         var shooterSubsystem = robotContainer.shooterSubsystem;
-        //var parallel = new ParallelCommandGroup(new AutoPickupCommand(shooterSubsystem), new AutoFollowCommand(drivetrainSubsystem, "StraightPath"));
         this.addCommands(new WaitCommand(.75));
-        this.addCommands(new AutoShootCommand(shooterSubsystem, -21, 2900));
+        this.addCommands(new AutoMoveShooter(shooterSubsystem, -21));
+        this.addCommands(new AutoShootCommand(shooterSubsystem, 2900));
         this.addCommands(new AutoPickupCommand(shooterSubsystem));
         this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "StraightPath"));
         this.addCommands(new WaitCommand(1));
-        this.addCommands(new AutoShootCommand(shooterSubsystem, -21, 3400));
-        //this.addCommands(parallel);
+        this.addCommands(new AutoMoveShooter(shooterSubsystem, -21));
+        this.addCommands(new AutoShootCommand(shooterSubsystem, 3500));
+        this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "SmallPath"));
     }
 }
