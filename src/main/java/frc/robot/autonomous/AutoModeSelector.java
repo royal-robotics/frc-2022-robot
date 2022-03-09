@@ -17,7 +17,7 @@ public class AutoModeSelector {
         _chooser.addOption(doNothing.getName(), doNothing);
         _chooser.setDefaultOption(shootAndBackup.getName(), shootAndBackup);
 
-        Shuffleboard.getTab("Competition").add(_chooser);
+        Shuffleboard.getTab("Competition").add(_chooser).withPosition(0, 0).withSize(2, 1);
     }
 
     public AutoModeBase getAutoMode() {

@@ -39,12 +39,14 @@ public class ShootCommand extends CommandBase {
     @Override
     public void execute() {
         m_shooterSubsystem.setAngleSetpoint(20);
-        double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
+        var limelight = NetworkTableInstance.getDefault().getTable("limelight");
+        limelight.getEntry("pipeline").setNumber(0);
+        double tv = limelight.getEntry("tv").getDouble(0);
         if (tv != 0 && m_shooterSubsystem.getAngle() < 50) {
-            double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
-            double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
+            double tx = limelight.getEntry("tx").getDouble(0);
+            double ty = limelight.getEntry("ty").getDouble(0);
             double rpm = ty * scale + offset;
-            ChassisSpeeds speed = new ChassisSpeeds(-m_driver.getForwardAxis().get(), -m_driver.getStrafeAxis().get(), -tx * 0.2);
+            ChassisSpeeds speed = new ChassisSpeeds(-m_driver.getForwardAxis().get(), -m_driver.getStrafeAxis().get(), -tx * 0.18       );
             m_drivetrainSubsystem.drive(speed);
             m_shooterSubsystem.setSpeedSetpoint(rpm);
             if (m_operator.getLeftBumper().get()) {

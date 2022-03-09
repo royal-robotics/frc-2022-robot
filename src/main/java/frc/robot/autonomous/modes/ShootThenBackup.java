@@ -33,7 +33,7 @@ public class ShootThenBackup extends AutoModeBase {
         this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "StraightPath"));
         this.addCommands(new WaitCommand(1));
         this.addCommands(new AutoMoveShooter(shooterSubsystem, -21));
-        this.addCommands(new AutoShootCommand(shooterSubsystem, 3500));
+        this.addCommands(new AutoShootCommand(shooterSubsystem, 3525));
         this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "SmallPath"));
     }
 }

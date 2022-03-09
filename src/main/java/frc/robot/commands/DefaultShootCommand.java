@@ -6,6 +6,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -61,6 +62,8 @@ public class DefaultShootCommand extends CommandBase {
 
     @Override
     public void execute() {
+        var limelight = NetworkTableInstance.getDefault().getTable("limelight");
+        limelight.getEntry("pipeline").setNumber(1);
         double shooterWheels = m_reverseWheelsSupplier.getAsBoolean() ?
             m_shooterWheelsSupplier.getAsDouble() :
             -m_shooterWheelsSupplier.getAsDouble();

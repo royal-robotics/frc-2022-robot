@@ -88,7 +88,7 @@ public class ShooterSubsystem extends SubsystemBase{
         m_angleController.setTolerance(2);
         m_speedController.setTolerance(100);
 
-        m_speedEntry = Shuffleboard.getTab("Shooter")
+        m_speedEntry = Shuffleboard.getTab("Competition")
             .add("Wheel Speed", 0)
             .withWidget(BuiltInWidgets.kNumberSlider)
             .withProperties(Map.of("min", 0, "max", RPM_TOP, "block increment", 50))
@@ -96,7 +96,7 @@ public class ShooterSubsystem extends SubsystemBase{
             .withSize(2, 2)
             .getEntry();
 
-        m_speedEntry.setDouble(RPM_TOP);
+        m_speedEntry.setDouble(3200);
 
         /*
         m_enableSpeedEntry = Shuffleboard.getTab("Shooter")
@@ -126,9 +126,9 @@ public class ShooterSubsystem extends SubsystemBase{
         m_encoder = new Encoder(10, 11, true);
         m_encoder.setDistancePerPulse(0.00390625);
 
-        Shuffleboard.getTab("Shooter")
-        .addNumber("Wheel Angle Sensor", () -> m_analogPotentiometer.getAverageVoltage() * -scale + offset)
-        .withPosition(4, 0);
+        Shuffleboard.getTab("Competition")
+        .addNumber("Shooter Angle", () -> m_analogPotentiometer.getAverageVoltage() * -scale + offset)
+        .withPosition(2, 2);
 
         Shuffleboard.getTab("Shooter")
         .addNumber("Wheel Angle Sensor Raw", () -> m_analogPotentiometer.getAverageVoltage())
@@ -150,9 +150,9 @@ public class ShooterSubsystem extends SubsystemBase{
         .addNumber("Speed FB Output", () -> m_speedOutput)
         .withPosition(3, 3);
 
-        Shuffleboard.getTab("Shooter")
-        .addNumber("Speed Total Output", () -> m_speedOutput + m_speedFFOutput)
-        .withPosition(4, 3);
+        Shuffleboard.getTab("Competition")
+        .addNumber("Shooter Output", () -> m_speedOutput + m_speedFFOutput)
+        .withPosition(2, 3);
 
         Shuffleboard.getTab("Shooter")
         .addNumber("Speed Setpoint", () -> m_speedSetpoint)

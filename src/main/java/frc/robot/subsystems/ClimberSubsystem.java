@@ -110,13 +110,13 @@ public class ClimberSubsystem extends SubsystemBase{
             .withSize(2, 1)
             .getEntry();
 
-        Shuffleboard.getTab("Climber")
+        Shuffleboard.getTab("Competition")
             .addNumber("Angle Output", () -> m_angleOutput)
-            .withPosition(0, 3);
+            .withPosition(3, 0);
 
-        Shuffleboard.getTab("Climber")
+        Shuffleboard.getTab("Competition")
             .addNumber("Distance Output", () -> m_distanceOutput)
-            .withPosition(1, 3);
+            .withPosition(3, 1);
 
         Shuffleboard.getTab("Climber")
         .addNumber("Angle Setpoint", () -> m_angleSetpoint)
