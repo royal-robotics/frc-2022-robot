@@ -34,28 +34,10 @@ public abstract class DriveCommandBase extends CommandBase {
 
     @Override
     public void execute() {
-        if (m_slowSupplier.getAsBoolean()) {
-            m_subsystem.drive(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                    m_translationXSupplier.getAsDouble() * 0.25,
-                    m_translationYSupplier.getAsDouble() * 0.25,
-                    m_rotationSupplier.getAsDouble() * 0.25,
-                    m_subsystem.getGyroscopeRotation())
-                /*new ChassisSpeeds(
-                    m_translationXSupplier.getAsDouble(),
-                    m_translationYSupplier.getAsDouble(),
-                    m_rotationSupplier.getAsDouble())*/);
+        if (isNoInput()) {
+            m_subsystem.setStableModuleStates();
         } else {
-            m_subsystem.drive(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                    m_translationXSupplier.getAsDouble(),
-                    m_translationYSupplier.getAsDouble(),
-                    m_rotationSupplier.getAsDouble(),
-                    m_subsystem.getGyroscopeRotation())
-                /*new ChassisSpeeds(
-                    m_translationXSupplier.getAsDouble(),
-                    m_translationYSupplier.getAsDouble(),
-                    m_rotationSupplier.getAsDouble())*/);
+            m_subsystem.drive(getInputChassisSpeeds());
         }
     }
 
@@ -67,5 +49,26 @@ public abstract class DriveCommandBase extends CommandBase {
     @Override
     public boolean isFinished() {
         return false;
+    }
+
+    private boolean isNoInput() {
+        return m_rotationSupplier.getAsDouble() == 0 &&
+            m_translationXSupplier.getAsDouble() == 0 &&
+            m_translationYSupplier.getAsDouble() == 0;
+    }
+    private ChassisSpeeds getInputChassisSpeeds() {
+        if (m_slowSupplier.getAsBoolean()) {
+            return ChassisSpeeds.fromFieldRelativeSpeeds(
+                m_translationXSupplier.getAsDouble() * 0.25,
+                m_translationYSupplier.getAsDouble() * 0.25,
+                m_rotationSupplier.getAsDouble() * 0.25,
+                m_subsystem.getGyroscopeRotation());
+        } else {
+            return ChassisSpeeds.fromFieldRelativeSpeeds(
+                m_translationXSupplier.getAsDouble(),
+                m_translationYSupplier.getAsDouble(),
+                m_rotationSupplier.getAsDouble(),
+                m_subsystem.getGyroscopeRotation());
+        }
     }
 }

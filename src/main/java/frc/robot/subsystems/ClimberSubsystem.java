@@ -30,14 +30,13 @@ public class ClimberSubsystem extends SubsystemBase{
     private final CANSparkMax m_climberAngle;
 
     private double m_climberState = 0;
-    private double m_climberAngleState = 0;
     private double m_angleSetpoint = 0;
     private double m_distanceSetpoint = 0;
 
     public final double TOP_ANGLE = 90;
     public final double BOTTOM_ANGLE = -23;
-    public final double TOP_VOLTAGE = 2.35;
-    public final double BOTTOM_VOLTAGE = 1.76;
+    public final double TOP_VOLTAGE = 2.479;
+    public final double BOTTOM_VOLTAGE = 1.892;
 
     public final double TOP_DISTANCE = 32;
 

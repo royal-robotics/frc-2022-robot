@@ -193,6 +193,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_ModuleState = states;
     }
 
+    public void setStableModuleStates() {
+        m_ModuleState = new SwerveModuleState[] {
+            new SwerveModuleState(0, new Rotation2d(-Math.PI / 4)),
+            new SwerveModuleState(0, new Rotation2d(Math.PI / 4)),
+            new SwerveModuleState(0, new Rotation2d(-3 * Math.PI / 4)),
+            new SwerveModuleState(0, new Rotation2d(3 * Math.PI / 4))
+        };
+    }
+
     @Override
     public void periodic() {
         SwerveModuleState[] states = m_ModuleState;

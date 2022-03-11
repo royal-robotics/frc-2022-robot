@@ -178,6 +178,8 @@ public class ShooterSubsystem extends SubsystemBase{
         .addNumber("ta", () -> NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0))
         .withPosition(3, 0);
 
+        var limelight = NetworkTableInstance.getDefault().getTable("limelight");
+        limelight.getEntry("pipeline").setNumber(1);
     }
 
     public void setMotorStates(double shooterSetpoint, double intake){
