@@ -55,7 +55,6 @@ public class ShooterSubsystem extends SubsystemBase{
     private DoubleSolenoid.Value m_kickerState = DoubleSolenoid.Value.kForward;
 
     public NetworkTableEntry m_speedEntry;
-    private NetworkTableEntry m_enableSpeedEntry;
     private NetworkTableEntry m_angleEntry;
     private NetworkTableEntry m_enableAngleEntry;
 

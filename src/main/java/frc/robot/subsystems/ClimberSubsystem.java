@@ -132,7 +132,6 @@ public class ClimberSubsystem extends SubsystemBase{
 
     public void setMotorStates(double climberState, double climberAngleState){
         m_climberState = climberState;
-        m_climberAngleState = climberAngleState;
     }
 
     public void resetEncoder(){
