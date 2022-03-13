@@ -69,15 +69,15 @@ public class ClimberSubsystem extends SubsystemBase{
         m_angleController = new PIDController(0.05, 0, 0);
         m_distanceController = new PIDController(0.5, 0, 0);
 
-        Shuffleboard.getTab("Climber")
-        .addNumber("Potentiometer", () -> m_analogPotentiometer.getAverageVoltage() * -scale + offset)
-        .withPosition(5, 0);
+        Shuffleboard.getTab("Competition")
+        .addNumber("Climber Angle", () -> m_analogPotentiometer.getAverageVoltage() * -scale + offset)
+        .withPosition(3, 2);
         Shuffleboard.getTab("Climber")
         .addNumber("Potentiometer Raw", () -> m_analogPotentiometer.getAverageVoltage())
         .withPosition(5, 1);
-        Shuffleboard.getTab("Climber")
-        .addNumber("Encoder", () -> m_encoder.getDistance())
-        .withPosition(6, 0);
+        Shuffleboard.getTab("Competition")
+        .addNumber("Climber Height", () -> m_encoder.getDistance())
+        .withPosition(3, 3);
 
         m_distanceEntry = Shuffleboard.getTab("Climber")
             .add("Climber Distance", 0)
@@ -109,13 +109,13 @@ public class ClimberSubsystem extends SubsystemBase{
             .withSize(2, 1)
             .getEntry();
 
-        Shuffleboard.getTab("Competition")
+        Shuffleboard.getTab("Climber")
             .addNumber("Angle Output", () -> m_angleOutput)
-            .withPosition(3, 0);
+            .withPosition(4, 0);
 
-        Shuffleboard.getTab("Competition")
+        Shuffleboard.getTab("Climber")
             .addNumber("Distance Output", () -> m_distanceOutput)
-            .withPosition(3, 1);
+            .withPosition(4, 1);
 
         Shuffleboard.getTab("Climber")
         .addNumber("Angle Setpoint", () -> m_angleSetpoint)

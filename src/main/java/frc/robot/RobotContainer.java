@@ -42,10 +42,18 @@ public class RobotContainer {
             () -> drivetrainSubsystem.zeroGyroscope()
         );
         m_operator.getA().whenPressed(
-            () -> m_pickupCommand.schedule()
+            () -> {
+                if (m_operator.getLeftTrigger().get() == 0) {
+                    m_pickupCommand.schedule();
+                }
+            }
         );
         m_operator.getA().whenReleased(
-            () -> m_pickupCommand.cancel()
+            () -> {
+                if (m_pickupCommand.isScheduled()) {
+                    m_pickupCommand.cancel();
+                }
+            }
         );
         m_operator.getB().whenPressed(
             () -> m_shootCommand.schedule()

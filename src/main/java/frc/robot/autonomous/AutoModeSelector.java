@@ -23,7 +23,7 @@ public class AutoModeSelector {
         this.addAutoMode(new WallBallTwoBall(robotContainer));
         this.addAutoMode(new HangarBallTwoBall(robotContainer));
 
-        Shuffleboard.getTab("Competition").add(_chooser).withPosition(0, 0).withSize(2, 1);
+        Shuffleboard.getTab("Competition").add("Auto Mode", _chooser).withPosition(0, 0).withSize(2, 1);
     }
 
     private void addAutoMode(AutoModeBase autoMode) {

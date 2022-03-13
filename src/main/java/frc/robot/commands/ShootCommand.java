@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.Sensors.Limelight;
 import frc.robot.input.StickController;
 import frc.robot.input.XboxController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -14,6 +15,7 @@ public class ShootCommand extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private final XboxController m_operator;
     private final StickController m_driver;
+    private final Limelight m_limelight = new Limelight();
 
     private final double TY_CLOSE = 16;
     private final double TY_FAR = -2.4;
@@ -42,16 +44,14 @@ public class ShootCommand extends CommandBase {
 
     @Override
     public void execute() {
-        var limelight = NetworkTableInstance.getDefault().getTable("limelight");
-        limelight.getEntry("pipeline").setNumber(0);
-        double tv = limelight.getEntry("tv").getDouble(0);
-        if (tv != 0 && m_shooterSubsystem.getAngle() < 50) {
+        m_limelight.setPipeline(0);
+        if (m_limelight.onTarget() && m_shooterSubsystem.getAngle() < 50) {
 
-            double tx = limelight.getEntry("tx").getDouble(0);
-            double ty = limelight.getEntry("ty").getDouble(0);
+            var tx = m_limelight.targetX();
+            var ty = m_limelight.targetY();
             if (ty > 20 && m_shooterSubsystem.getAngle() > 22.5) {
                 m_shooterSubsystem.setAngleSetpoint(20);
-            } else if (ty < 15 && m_shooterSubsystem.getAngle() < 22.5) {
+            } else if (ty < 12 && m_shooterSubsystem.getAngle() < 22.5) {
                 m_shooterSubsystem.setAngleSetpoint(25);
             }
 
@@ -80,7 +80,6 @@ public class ShootCommand extends CommandBase {
     public void end(boolean interrupted) {
         m_shooterSubsystem.setSpeedSetpoint(0);
         m_shooterSubsystem.setSolenoidStates(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward);
-        var limelight = NetworkTableInstance.getDefault().getTable("limelight");
-        limelight.getEntry("pipeline").setNumber(1);
+        m_limelight.setPipeline(1);
     }
 }

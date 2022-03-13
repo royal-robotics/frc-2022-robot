@@ -14,16 +14,22 @@ public class DefaultClimbCommand extends CommandBase {
     private final DoubleSupplier m_climberAngleSupplier;
     private final DoubleSupplier m_climberSupplier;
     private final BooleanSupplier m_enableClimberAngle;
+    private final BooleanSupplier m_angleExtendSupplier;
+    private final BooleanSupplier m_angleRetractSupplier;
 
     public DefaultClimbCommand(ClimberSubsystem subsystem,
             DoubleSupplier climberAngleSupplier,
             DoubleSupplier climberSupplier,
-            BooleanSupplier enableClimberAngle){
+            BooleanSupplier enableClimberAngle,
+            BooleanSupplier angleExtendSupplier,
+            BooleanSupplier angleRetractSupplier){
 
         m_subsystem = subsystem;
         m_climberAngleSupplier = climberAngleSupplier;
         m_climberSupplier = climberSupplier;
         m_enableClimberAngle = enableClimberAngle;
+        m_angleExtendSupplier = angleExtendSupplier;
+        m_angleRetractSupplier = angleRetractSupplier;
 
         addRequirements(subsystem);
     }
@@ -33,7 +39,9 @@ public class DefaultClimbCommand extends CommandBase {
             subsystem,
             ()-> -controller.getLeftX().get(),
             ()-> controller.getRightY().get(),
-            ()-> controller.getRightBumper().get());
+            ()-> controller.getRightBumper().get(),
+            ()-> controller.getDpadLeft().get(),
+            ()-> controller.getDpadRight().get());
     }
 
     @Override
@@ -42,14 +50,18 @@ public class DefaultClimbCommand extends CommandBase {
     @Override
     public void execute() {
         if(m_enableClimberAngle.getAsBoolean()){
-            
-        double angleSetpointChange = m_climberAngleSupplier.getAsDouble() * 15;
+            double angleSetpointChange = m_climberAngleSupplier.getAsDouble() * 15;
             if (angleSetpointChange != 0) {
                 double newAngleSetpoint = m_subsystem.getAngle() + angleSetpointChange;
                 m_subsystem.setAngleSetpoint(newAngleSetpoint);
             }
         }
-        
+
+        if (m_angleExtendSupplier.getAsBoolean()) {
+            m_subsystem.setAngleSetpoint(80);
+        } else if (m_angleRetractSupplier.getAsBoolean()) {
+            m_subsystem.setAngleSetpoint(65);
+        }
 
         double distanceSetpointChange = m_climberSupplier.getAsDouble() * 2;
         if (distanceSetpointChange != 0) {

@@ -14,32 +14,29 @@ public class DefaultShootCommand extends CommandBase {
 
     private final DoubleSupplier m_shooterAngleSupplier;
     private final DoubleSupplier m_shooterWheelsSupplier;
-    private final BooleanSupplier m_intakeSupplier;
-    private final BooleanSupplier m_outtakeSupplier;
-    private final BooleanSupplier m_reverseWheelsSupplier;
-    //private final BooleanSupplier m_extendIntakeSupplier;
     private final BooleanSupplier m_disableShooterAngle;
     private final BooleanSupplier m_kickerSupplier;
+    private final BooleanSupplier m_shortShotSupplier;
+    private final BooleanSupplier m_midShotSupplier;
+    private final BooleanSupplier m_longShotSupplier;
 
     public DefaultShootCommand(ShooterSubsystem subsystem,
             DoubleSupplier shooterAngleSupplier,
             DoubleSupplier shooterWheelsSupplier,
-            BooleanSupplier intakeSupplier,
-            BooleanSupplier outtakeSupplier,
-            BooleanSupplier reverseWheelsSupplier,
-            //BooleanSupplier extendIntakeSupplier,
             BooleanSupplier disableShooterSupplier,
-            BooleanSupplier kickerSupplier){
+            BooleanSupplier kickerSupplier,
+            BooleanSupplier shortShotSupplier,
+            BooleanSupplier midShotSupplier,
+            BooleanSupplier longShotSupplier){
 
         m_subsystem = subsystem;
         m_shooterAngleSupplier = shooterAngleSupplier;
         m_shooterWheelsSupplier = shooterWheelsSupplier;
-        m_intakeSupplier = intakeSupplier;
-        m_outtakeSupplier = outtakeSupplier;
-        m_reverseWheelsSupplier = reverseWheelsSupplier;
-        //m_extendIntakeSupplier = extendIntakeSupplier;
         m_disableShooterAngle = disableShooterSupplier;
         m_kickerSupplier = kickerSupplier;
+        m_shortShotSupplier = shortShotSupplier;
+        m_midShotSupplier = midShotSupplier;
+        m_longShotSupplier = longShotSupplier;
 
         addRequirements(subsystem);
     }
@@ -49,11 +46,11 @@ public class DefaultShootCommand extends CommandBase {
             subsystem,
             ()-> -controller.getLeftY().get(),
             ()-> controller.getLeftTrigger().get(),
-            ()-> controller.getX().get(),
-            ()-> controller.getY().get(),
-            ()-> controller.getStart().get(),
             ()-> controller.getRightBumper().get(),
-            ()-> controller.getLeftBumper().get());
+            ()-> controller.getLeftBumper().get(),
+            ()-> controller.getY().get(),
+            ()-> controller.getX().get(),
+            ()-> controller.getA().get());
     }
 
     @Override
@@ -61,25 +58,17 @@ public class DefaultShootCommand extends CommandBase {
 
     @Override
     public void execute() {
-        double shooterWheels = m_reverseWheelsSupplier.getAsBoolean() ?
-            m_shooterWheelsSupplier.getAsDouble() :
-            -m_shooterWheelsSupplier.getAsDouble();
-
-        boolean in = m_intakeSupplier.getAsBoolean();
-        boolean out = m_outtakeSupplier.getAsBoolean();
-        double intakeWheels = 0;
-
-        if(in && out){
-            intakeWheels = 0;
-        }else if(in){
-            intakeWheels = -0.5;
-            shooterWheels = -1.0;
-        }else if(out){
-            intakeWheels = 0.5;
-            shooterWheels = 1.0;
+        double shooterWheels = -m_shooterWheelsSupplier.getAsDouble() * m_subsystem.m_speedEntry.getDouble(m_subsystem.RPM_TOP);
+        if (shooterWheels != 0) {
+            if (m_shortShotSupplier.getAsBoolean()) {
+                shooterWheels = 2500;
+            } else if (m_midShotSupplier.getAsBoolean()) {
+                shooterWheels = 3000;
+            } else if (m_longShotSupplier.getAsBoolean()) {
+                shooterWheels = 3800;
+            }
         }
-
-        m_subsystem.setMotorStates(shooterWheels * m_subsystem.m_speedEntry.getDouble(m_subsystem.RPM_TOP), intakeWheels);
+        m_subsystem.setMotorStates(shooterWheels, 0);
 
         if(m_disableShooterAngle.getAsBoolean()==false){
             double setpointChange = m_shooterAngleSupplier.getAsDouble() * 2;
@@ -88,11 +77,6 @@ public class DefaultShootCommand extends CommandBase {
             m_subsystem.setAngleSetpoint(newSetpoint);
         }
 
-        /*
-        DoubleSolenoid.Value extendIntake = m_extendIntakeSupplier.getAsBoolean() ?
-            DoubleSolenoid.Value.kReverse :
-            DoubleSolenoid.Value.kForward;
-        */
         DoubleSolenoid.Value kicker = m_kickerSupplier.getAsBoolean() ?
             DoubleSolenoid.Value.kReverse :
             DoubleSolenoid.Value.kForward;

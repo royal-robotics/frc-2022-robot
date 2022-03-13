@@ -9,18 +9,20 @@ import edu.wpi.first.math.controller.*;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Sensors.Limelight;
 
 import java.util.Map;
 
 public class ShooterSubsystem extends SubsystemBase{
 
-    public final int pickupAngle = 122;
+    public final int pickupAngle = 121;
 
     public final int SHOOTER_ANGLE_MOTOR = 3;
     public final int RIGHT_SHOOTER_WHEEL_MOTOR = 9;
@@ -33,12 +35,13 @@ public class ShooterSubsystem extends SubsystemBase{
     public final int KICKER_RIGHT = 4;
 
     public final double TOP_ANGLE = -21;
-    public final double BOTTOM_ANGLE = 132;
-    public final double TOP_VOLTAGE = 2.516;
-    public final double BOTTOM_VOLTAGE = 2.302;
+    public final double BOTTOM_ANGLE = 122;
+    public double topVoltage = 2.463;
+    public double bottomVoltage = 2.279;
+    public final double VOLTAGE_RANGE = 0.194;
 
-    private double scale = (BOTTOM_ANGLE - TOP_ANGLE) / (TOP_VOLTAGE - BOTTOM_VOLTAGE);
-    private double offset = scale * TOP_VOLTAGE + TOP_ANGLE;
+    private double scale = (BOTTOM_ANGLE - TOP_ANGLE) / (topVoltage - bottomVoltage);
+    private double offset = scale * topVoltage + TOP_ANGLE;
 
     public final double RPM_TOP = 5600;
 
@@ -71,6 +74,11 @@ public class ShooterSubsystem extends SubsystemBase{
     private SimpleMotorFeedforward m_speedFeedForward;
     private PIDController m_speedController;
 
+    private DigitalInput m_bottomLimit;
+
+    private final Limelight m_limelight = new Limelight();
+    private boolean m_readyToFire = false;
+
     public ShooterSubsystem(){
         m_shooterAngle = new CANSparkMax(SHOOTER_ANGLE_MOTOR, MotorType.kBrushless);
         m_rightShooterWheel = new TalonSRX(RIGHT_SHOOTER_WHEEL_MOTOR);
@@ -87,6 +95,8 @@ public class ShooterSubsystem extends SubsystemBase{
         m_angleController.setTolerance(2);
         m_speedController.setTolerance(100);
 
+        m_bottomLimit = new DigitalInput(0);
+
         m_speedEntry = Shuffleboard.getTab("Competition")
             .add("Wheel Speed", 0)
             .withWidget(BuiltInWidgets.kNumberSlider)
@@ -95,7 +105,7 @@ public class ShooterSubsystem extends SubsystemBase{
             .withSize(2, 2)
             .getEntry();
 
-        m_speedEntry.setDouble(3200);
+        m_speedEntry.setDouble(3000);
 
         /*
         m_enableSpeedEntry = Shuffleboard.getTab("Shooter")
@@ -129,6 +139,10 @@ public class ShooterSubsystem extends SubsystemBase{
         .addNumber("Shooter Angle", () -> getAngle())
         .withPosition(2, 2);
 
+        Shuffleboard.getTab("Competition")
+        .addBoolean("Fire Ready", () -> m_readyToFire)
+        .withPosition(2, 4);
+
         Shuffleboard.getTab("Shooter")
         .addNumber("Wheel Angle Sensor Raw", () -> m_analogPotentiometer.getAverageVoltage())
         .withPosition(4, 1);
@@ -149,7 +163,7 @@ public class ShooterSubsystem extends SubsystemBase{
         .addNumber("Speed FB Output", () -> m_speedOutput)
         .withPosition(3, 3);
 
-        Shuffleboard.getTab("Competition")
+        Shuffleboard.getTab("Shooter")
         .addNumber("Shooter Output", () -> m_speedOutput + m_speedFFOutput)
         .withPosition(2, 3);
 
@@ -157,28 +171,29 @@ public class ShooterSubsystem extends SubsystemBase{
         .addNumber("Speed Setpoint", () -> m_speedSetpoint)
         .withPosition(5, 3);
 
+        Shuffleboard.getTab("Competition")
+        .addNumber("Shooter RPM", () -> m_encoder.getRate() * 60)
+        .withPosition(2, 3);
+
         Shuffleboard.getTab("Shooter")
-        .addNumber("Speed Sensor", () -> m_encoder.getRate() * 60)
-        .withPosition(4, 2);
+        .addBoolean("Bottom Limit", () -> m_bottomLimit.get())
+        .withPosition(4, 3);
 
         Shuffleboard.getTab("Camera")
-        .addNumber("tv", () ->  NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0))
+        .addBoolean("tv", () ->  m_limelight.onTarget())
         .withPosition(0, 0);
 
         Shuffleboard.getTab("Camera")
-        .addNumber("tx", () -> NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0))
+        .addNumber("tx", () -> m_limelight.targetX())
         .withPosition(1, 0);
 
-        Shuffleboard.getTab("Camera")
-        .addNumber("ty", () -> NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0))
-        .withPosition(2, 0);
+        Shuffleboard.getTab("Competition")
+        .addNumber("Camera ty", () -> m_limelight.targetY())
+        .withPosition(0, 3);
 
         Shuffleboard.getTab("Camera")
-        .addNumber("ta", () -> NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0))
+        .addNumber("ta", () -> m_limelight.targetArea())
         .withPosition(3, 0);
-
-        var limelight = NetworkTableInstance.getDefault().getTable("limelight");
-        limelight.getEntry("pipeline").setNumber(1);
     }
 
     public void setMotorStates(double shooterSetpoint, double intake){
@@ -278,6 +293,27 @@ public class ShooterSubsystem extends SubsystemBase{
 
         var shooterAngle = getAngle();
         m_angleOutput = m_angleController.calculate(shooterAngle);
+        if (angleSetpoint > 100 && shooterAngle > 100) {
+            m_angleOutput = 0.2;
+        }
+        if (angleSetpoint > 115 && shooterAngle > 115) {
+            m_angleOutput = 0.05;
+        }
         m_shooterAngle.set(m_angleOutput);
+
+        m_readyToFire = isReadyToFire();
+
+        if (m_bottomLimit.get()) {
+            bottomVoltage = m_analogPotentiometer.getAverageVoltage() - 0.005;
+            topVoltage = bottomVoltage + VOLTAGE_RANGE;
+
+            scale = (BOTTOM_ANGLE - TOP_ANGLE) / (topVoltage - bottomVoltage);
+            offset = scale * topVoltage + TOP_ANGLE;
+        }
+    }
+
+    private boolean isReadyToFire() {
+        var tx = m_limelight.targetX();
+        return m_limelight.onTarget() && (tx > -1 && tx < 1) && m_angleController.atSetpoint() && m_speedController.atSetpoint();
     }
 }

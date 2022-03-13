@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,10 +26,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     // Based on the absolute position of the encoders, use this procedure to calculate:
     // https://github.com/SwerveDriveSpecialties/swerve-template#setting-up-module-offsets
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(119.8828125);
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(199.8550415);
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(57.7331543);
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(302.34375);
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(120.493);
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(199.594);
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(58.708);
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(302.426);
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 3;
@@ -152,7 +153,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
             BACK_RIGHT_MODULE_STEER_ENCODER,
             BACK_RIGHT_MODULE_STEER_OFFSET);
 
-        m_dashboardTab.addNumber("Gryo", () -> getGyroscopeRotation().getDegrees()).withPosition(8, 0);
+
+        Shuffleboard.getTab("Competition")
+            .addNumber("Gryo", () -> getGyroscopeRotation().getDegrees())
+            .withWidget(BuiltInWidgets.kGyro)
+            .withSize(2, 2)
+            .withPosition(0, 1);
+
         m_dashboardTab.addNumber("x-Odometry", () -> m_odometry.getPoseMeters().getX()).withPosition(8, 1);
         m_dashboardTab.addNumber("y-Odometry", () -> m_odometry.getPoseMeters().getY()).withPosition(8, 2);
         m_dashboardTab.addNumber("Max velocity", () -> {
@@ -212,6 +219,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
             new SwerveModuleState(0, new Rotation2d(-3 * Math.PI / 4)),
             new SwerveModuleState(0, new Rotation2d(3 * Math.PI / 4))
         };
+        /*m_ModuleState = new SwerveModuleState[] {
+            new SwerveModuleState(0, new Rotation2d(0)),
+            new SwerveModuleState(0, new Rotation2d(0)),
+            new SwerveModuleState(0, new Rotation2d(0)),
+            new SwerveModuleState(0, new Rotation2d(0))
+        };*/
     }
 
     @Override

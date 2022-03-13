@@ -3,6 +3,7 @@ package frc.robot.input;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 public final class XboxController {
     private final Joystick joystick;
@@ -22,6 +23,11 @@ public final class XboxController {
     private final Axis LeftTrigger;
     private final Axis RightTrigger;
 
+    private final POVButton DpadUp;
+    private final POVButton DpadDown;
+    private final POVButton DpadLeft;
+    private final POVButton DpadRight;
+
     public XboxController(int port) {
         joystick = new Joystick(port);
 
@@ -40,6 +46,11 @@ public final class XboxController {
         RightTrigger = new Axis(joystick, 3, true);
         RightX = new Axis(joystick, 4, true);
         RightY = new Axis(joystick, 5, true);
+
+        DpadUp = new POVButton(joystick, 0);
+        DpadDown = new POVButton(joystick, 180);
+        DpadLeft = new POVButton(joystick, 270);
+        DpadRight = new POVButton(joystick, 90);
     }
 
     public Axis getLeftX() {
@@ -94,5 +105,17 @@ public final class XboxController {
     }
     public Button getBack(){
         return Back;
+    }
+    public POVButton getDpadUp(){
+        return DpadUp;
+    }
+    public POVButton getDpadDown(){
+        return DpadDown;
+    }
+    public POVButton getDpadLeft(){
+        return DpadLeft;
+    }
+    public POVButton getDpadRight(){
+        return DpadRight;
     }
 }
