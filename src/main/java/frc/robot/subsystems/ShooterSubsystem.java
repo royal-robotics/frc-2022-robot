@@ -34,8 +34,8 @@ public class ShooterSubsystem extends SubsystemBase{
 
     public final double TOP_ANGLE = -21;
     public final double BOTTOM_ANGLE = 132;
-    public final double TOP_VOLTAGE = 2.481;
-    public final double BOTTOM_VOLTAGE = 2.281;
+    public final double TOP_VOLTAGE = 2.516;
+    public final double BOTTOM_VOLTAGE = 2.302;
 
     private double scale = (BOTTOM_ANGLE - TOP_ANGLE) / (TOP_VOLTAGE - BOTTOM_VOLTAGE);
     private double offset = scale * TOP_VOLTAGE + TOP_ANGLE;
