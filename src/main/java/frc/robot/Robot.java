@@ -4,9 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.autonomous.AutoModeSelector;
 
 /**
@@ -16,69 +16,70 @@ import frc.robot.autonomous.AutoModeSelector;
  * project.
  */
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
-  private final RobotContainer m_robotContainer;
-  private final AutoModeSelector m_autoModeSelector;
+    private Command m_autonomousCommand;
+    private final RobotContainer m_robotContainer;
+    private final AutoModeSelector m_autoModeSelector;
 
-  public Robot() {
+    public Robot() {
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
         m_robotContainer = new RobotContainer();
         m_autoModeSelector = new AutoModeSelector(m_robotContainer);
     }
 
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
-  @Override
-  public void robotInit() {
+    /**
+     * This function is run when the robot is first started up and should be used for any
+     * initialization code.
+     */
+    @Override
+    public void robotInit() {
 
-  }
-
-  /**
-   * This function is called every robot packet, no matter the mode. Use this for items like
-   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
-   */
-  @Override
-  public void robotPeriodic() {
-    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-    // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
-    // block in order for anything in the Command-based framework to work.
-    CommandScheduler.getInstance().run();
-  }
-
-  @Override
-  public void disabledInit() {}
-
-  @Override
-  public void disabledPeriodic() {}
-
-  @Override
-  public void autonomousInit() {
-    m_robotContainer.shooterSubsystem.setAngleSetpointCurrent();
-    m_robotContainer.climberSubsystem.setAngleSetpointCurrent();
-    m_autonomousCommand = m_autoModeSelector.getAutoMode();
-    m_autonomousCommand.schedule();
-  }
-
-  @Override
-  public void autonomousPeriodic() {}
-
-  @Override
-  public void teleopInit() {
-    // This makes sure that the autonomous stops running when teleop starts.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
     }
-    m_robotContainer.shooterSubsystem.setAngleSetpointCurrent();
-    m_robotContainer.climberSubsystem.setAngleSetpointCurrent();
-    m_robotContainer.climberSubsystem.resetEncoder();
-    
 
-  }
+    /**
+     * This function is called every robot packet, no matter the mode. Use this for items like
+     * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
+     */
+    @Override
+    public void robotPeriodic() {
+        // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+        // commands, running already-scheduled commands, removing finished or interrupted commands,
+        // and running subsystem periodic() methods.  This must be called from the robot's periodic
+        // block in order for anything in the Command-based framework to work.
+        CommandScheduler.getInstance().run();
+    }
 
-  @Override
-  public void teleopPeriodic() {}
+    @Override
+    public void disabledInit() {}
+
+    @Override
+    public void disabledPeriodic() {}
+
+    @Override
+    public void autonomousInit() {
+        m_robotContainer.shooterSubsystem.setAngleSetpointCurrent();
+        m_robotContainer.climberSubsystem.setAngleSetpointCurrent();
+        m_robotContainer.drivetrainSubsystem.m_odometry.resetPosition(new Pose2d(), new Rotation2d());
+
+        m_autonomousCommand = m_autoModeSelector.getAutoMode();
+        m_autonomousCommand.schedule();
+    }
+
+    @Override
+    public void autonomousPeriodic() {}
+
+    @Override
+    public void teleopInit() {
+        // This makes sure that the autonomous stops running when teleop starts.
+        if (m_autonomousCommand != null) {
+            m_autonomousCommand.cancel();
+        }
+
+        m_robotContainer.shooterSubsystem.setAngleSetpointCurrent();
+        m_robotContainer.climberSubsystem.setAngleSetpointCurrent();
+        m_robotContainer.climberSubsystem.resetEncoder();
+    }
+
+    @Override
+    public void teleopPeriodic() {}
 }
