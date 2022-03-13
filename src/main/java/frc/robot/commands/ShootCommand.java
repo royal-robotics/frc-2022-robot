@@ -20,8 +20,11 @@ public class ShootCommand extends CommandBase {
     private final double RPM_CLOSE = 2700;
     private final double RPM_FAR = 4000;
 
-    private final double scale = (RPM_FAR - RPM_CLOSE) / (TY_FAR - TY_CLOSE);
+    /*private final double scale = (RPM_FAR - RPM_CLOSE) / (TY_FAR - TY_CLOSE);
     private final double offset = -scale * TY_FAR + RPM_FAR;
+    */
+    private final double scale = -50.6693;
+    private final double offset = 3546.1;
     private final double m_slowScale = 0.25;
 
     public ShootCommand(ShooterSubsystem shootSystem, DrivetrainSubsystem driveSystem, XboxController operator, StickController driver) {

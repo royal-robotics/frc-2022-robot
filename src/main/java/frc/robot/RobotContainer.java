@@ -4,20 +4,9 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
-import frc.robot.input.StickController;
-import frc.robot.input.XboxController;
-import edu.wpi.first.wpilibj2.command.*;
-import com.pathplanner.lib.*;
-
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import com.pathplanner.lib.commands.*;
-
+import frc.robot.input.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -45,14 +34,10 @@ public class RobotContainer {
         climberSubsystem.setDefaultCommand(new DefaultClimbCommand(climberSubsystem, m_operator));
         shooterSubsystem.setDefaultCommand(new DefaultShootCommand(shooterSubsystem, m_operator));
 
-
         configureButtonBindings();
     }
 
     private void configureButtonBindings() {
-        // m_controller.getA().whenPressed(
-        //     () ->  m_drivetrainSubsystem.zeroGyroscope()
-        // );
         m_controller.getT1().whenPressed(
             () -> drivetrainSubsystem.zeroGyroscope()
         );
@@ -72,20 +57,4 @@ public class RobotContainer {
             climberSubsystem.resetEncoder();
         }
     }
-
-    /* //moved to automonous folder. RIP
-    public Command getAutonomousCommand() {
-        PathPlannerTrajectory examplePath = PathPlanner.loadPath("TurnPath", DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5);
-        //PIDController x_control = new PIDController(0.5, 0, 0);
-        //PIDController y_control = new PIDController(0.5, 0, 0);
-        PIDController x_control = new PIDController(0, 0, 0);
-        PIDController y_control = new PIDController(0, 0, 0);
-        ProfiledPIDController angle_control = new ProfiledPIDController(1, 0, 0, new TrapezoidProfile.Constraints(DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5));
-        angle_control.enableContinuousInput(-Math.PI, Math.PI);
-        drivetrainSubsystem.resetPose(examplePath.getInitialPose());
-        drivetrainSubsystem.setGyroscope(examplePath.getInitialPose().getRotation().getDegrees());
-        PPSwerveControllerCommand pathCommand = new PPSwerveControllerCommand(examplePath,() -> drivetrainSubsystem.getPose(),drivetrainSubsystem.getKinematics(),x_control,y_control, angle_control, (SwerveModuleState[] states) -> drivetrainSubsystem.setModuleStates(states),drivetrainSubsystem);
-        return new SequentialCommandGroup(new AutoShootCommand(shooterSubsystem, -21, 2900), new AutoPickupCommand(shooterSubsystem), pathCommand, new InstantCommand(() -> drivetrainSubsystem.drive(new ChassisSpeeds()), drivetrainSubsystem));
-    }
-    */
 }

@@ -101,6 +101,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final SwerveModule m_backLeftModule;
     private final SwerveModule m_backRightModule;
 
+    private double maxVelocity = 0.0;
+
     public final ShuffleboardTab m_dashboardTab = Shuffleboard.getTab("Drivetrain");
 
     private SwerveModuleState[] m_ModuleState = new SwerveModuleState[4];
@@ -151,6 +153,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_dashboardTab.addNumber("Gryo", () -> getGyroscopeRotation().getDegrees()).withPosition(8, 0);
         m_dashboardTab.addNumber("x-Odometry", () -> m_odometry.getPoseMeters().getX()).withPosition(8, 1);
         m_dashboardTab.addNumber("y-Odometry", () -> m_odometry.getPoseMeters().getY()).withPosition(8, 2);
+        m_dashboardTab.addNumber("Max velocity", () -> {
+            var velocity = m_frontLeftModule.getDriveVelocity();
+            if (velocity > maxVelocity) {
+                maxVelocity = velocity;
+            }
+            return maxVelocity;
+        }).withPosition(8, 3);
 
         m_ModuleState[0] = new SwerveModuleState();
         m_ModuleState[1] = new SwerveModuleState();
@@ -173,7 +182,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * currently facing to the 'forwards' direction.
    */
     public void zeroGyroscope() {
-        m_pigeon.setFusedHeading(0.0);
+        setGyroscope(0.0);
     }
 
     public Rotation2d getGyroscopeRotation() {
@@ -181,7 +190,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public void setGyroscope(double angle) {
-        m_pigeon.setFusedHeading(angle);
+        m_pigeon.setFusedHeading(angle * 64);
+        // m_pigeon.setYaw(angle);
     }
 
     public void drive(ChassisSpeeds chassisSpeeds) {

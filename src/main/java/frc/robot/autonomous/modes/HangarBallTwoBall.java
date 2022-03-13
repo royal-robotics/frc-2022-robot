@@ -8,9 +8,9 @@ import frc.robot.commands.AutoMoveShooter;
 import frc.robot.commands.AutoPickupCommand;
 import frc.robot.commands.AutoShootCommand;
 
-public class ShootThenBackup extends AutoModeBase {
-    public ShootThenBackup(RobotContainer robotContainer) {
-        super("Shoot Then Backup");
+public class HangarBallTwoBall extends AutoModeBase {
+    public HangarBallTwoBall(RobotContainer robotContainer) {
+        super("HangarBall");
 
         var drivetrainSubsystem = robotContainer.drivetrainSubsystem;
         var shooterSubsystem = robotContainer.shooterSubsystem;
@@ -18,7 +18,7 @@ public class ShootThenBackup extends AutoModeBase {
         //this.addCommands(new AutoMoveShooter(shooterSubsystem, -21));
         this.addCommands(new AutoShootCommand(shooterSubsystem, 2500));
         this.addCommands(new AutoPickupCommand(shooterSubsystem));
-        this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "StraightPath"));
+        this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "HangarBallPath"));
         this.addCommands(new WaitCommand(1));
         this.addCommands(new AutoMoveShooter(shooterSubsystem, -21));
         this.addCommands(new AutoShootCommand(shooterSubsystem, 2800));

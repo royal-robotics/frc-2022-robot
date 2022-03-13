@@ -5,8 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.controller.*;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -21,6 +20,8 @@ import java.util.Map;
 
 public class ShooterSubsystem extends SubsystemBase{
 
+    public final int pickupAngle = 122;
+
     public final int SHOOTER_ANGLE_MOTOR = 3;
     public final int RIGHT_SHOOTER_WHEEL_MOTOR = 9;
     public final int LEFT_SHOOTER_WHEEL_MOTOR = 8;
@@ -32,9 +33,9 @@ public class ShooterSubsystem extends SubsystemBase{
     public final int KICKER_RIGHT = 4;
 
     public final double TOP_ANGLE = -21;
-    public final double BOTTOM_ANGLE = 134;
-    public final double TOP_VOLTAGE = 2.72705;
-    public final double BOTTOM_VOLTAGE = 2.51586;
+    public final double BOTTOM_ANGLE = 132;
+    public final double TOP_VOLTAGE = 2.481;
+    public final double BOTTOM_VOLTAGE = 2.281;
 
     private double scale = (BOTTOM_ANGLE - TOP_ANGLE) / (TOP_VOLTAGE - BOTTOM_VOLTAGE);
     private double offset = scale * TOP_VOLTAGE + TOP_ANGLE;
@@ -49,7 +50,6 @@ public class ShooterSubsystem extends SubsystemBase{
     private final DoubleSolenoid m_extendIntake;
     private final DoubleSolenoid m_kicker;
 
-    //private double m_shooterWheelState = 0;
     private double m_intakeState = 0;
     private DoubleSolenoid.Value m_extendIntakeState = DoubleSolenoid.Value.kForward;
     private DoubleSolenoid.Value m_kickerState = DoubleSolenoid.Value.kForward;
@@ -126,7 +126,7 @@ public class ShooterSubsystem extends SubsystemBase{
         m_encoder.setDistancePerPulse(0.00390625);
 
         Shuffleboard.getTab("Competition")
-        .addNumber("Shooter Angle", () -> m_analogPotentiometer.getAverageVoltage() * -scale + offset)
+        .addNumber("Shooter Angle", () -> getAngle())
         .withPosition(2, 2);
 
         Shuffleboard.getTab("Shooter")
@@ -237,7 +237,6 @@ public class ShooterSubsystem extends SubsystemBase{
     @Override
     public void periodic(){
         double speedSetpoint = m_speedSetpoint;
-        
         /*
         if (m_enableSpeedEntry.getBoolean(false)) {
             speedSetpoint = m_speedEntry.getDouble(0);
@@ -276,7 +275,9 @@ public class ShooterSubsystem extends SubsystemBase{
         {
             m_angleController.setSetpoint(angleSetpoint);
         }
-        m_angleOutput = m_angleController.calculate(m_analogPotentiometer.getAverageVoltage() * -scale + offset);
+
+        var shooterAngle = getAngle();
+        m_angleOutput = m_angleController.calculate(shooterAngle);
         m_shooterAngle.set(m_angleOutput);
     }
 }

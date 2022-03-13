@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj.Joystick;
 
 public final class Axis {
-	public static final double DEADBAND = 0.1;
+	private static final double DEADBAND = 0.1;
 
 	private boolean inverted = false;
 	private double scale = 1.0;
