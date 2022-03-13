@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.swervedrivespecialties.swervelib.Mk3ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
@@ -57,9 +58,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * <p>
      * This is a measure of how fast the robot should be able to drive in a straight line.
      */
-    public static final double MAX_VELOCITY_METERS_PER_SECOND = 6380.0 / 60.0 *
-        SdsModuleConfigurations.MK3_FAST.getDriveReduction() *
-        SdsModuleConfigurations.MK3_FAST.getWheelDiameter() * Math.PI;
+    // public static final double MAX_VELOCITY_METERS_PER_SECOND = 6380.0 / 60.0 *
+    //     SdsModuleConfigurations.MK3_FAST.getDriveReduction() *
+    //     SdsModuleConfigurations.MK3_FAST.getWheelDiameter() * Math.PI;
+    public static final double MAX_VELOCITY_METERS_PER_SECOND = 4.2 * 1.08; // Measured;
 
     // Here we calculate the theoretical maximum angular velocity. You can also replace this with a measured amount.
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /

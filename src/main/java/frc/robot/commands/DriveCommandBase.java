@@ -3,6 +3,7 @@ package frc.robot.commands;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -34,10 +35,12 @@ public abstract class DriveCommandBase extends CommandBase {
 
     @Override
     public void execute() {
-        if (isNoInput()) {
-            m_subsystem.setStableModuleStates();
-        } else {
-            m_subsystem.drive(getInputChassisSpeeds());
+        if (DriverStation.isTeleop()) {
+            if (isNoInput()) {
+                m_subsystem.setStableModuleStates();
+            } else {
+                m_subsystem.drive(getInputChassisSpeeds());
+            }
         }
     }
 
