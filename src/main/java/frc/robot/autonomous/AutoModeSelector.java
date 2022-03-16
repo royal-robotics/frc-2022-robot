@@ -20,10 +20,10 @@ public class AutoModeSelector {
         _chooser = new SendableChooser<Supplier<AutoModeBase>>();
 
         this.addAutoMode(() -> new DoNothingAutoMode());
-        this.addAutoMode(() -> new ShootThenBackup(robotContainer));
+        this.addAutoMode(() -> new ShootThenBackup(robotContainer), true);
         //this.addAutoMode(() -> new ThreeBallAuto(robotContainer));
-        //this.addAutoMode(() -> new TestAuto(robotContainer));
-        //this.addAutoMode(() -> new WallBallTwoBall(robotContainer), true);
+        // this.addAutoMode(() -> new TestAuto(robotContainer));
+        //this.addAutoMode(() -> new WallBallTwoBall(robotContainer));
         //this.addAutoMode(() -> new HangarBallTwoBall(robotContainer));
         this.addAutoMode(() -> new MiddleBallTwoBall(robotContainer));
 

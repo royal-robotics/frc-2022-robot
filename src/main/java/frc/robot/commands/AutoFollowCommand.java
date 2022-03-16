@@ -25,9 +25,9 @@ public class AutoFollowCommand extends SequentialCommandGroup {
         }));
 
         // Follow path
-        PIDController x_control = new PIDController(0.01, 0, 0);
-        PIDController y_control = new PIDController(0.01, 0, 0);
-        ProfiledPIDController angle_control = new ProfiledPIDController(5, 0, 0, new TrapezoidProfile.Constraints(2, 1)); //DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5
+        PIDController x_control = new PIDController(0.00, 0, 0);
+        PIDController y_control = new PIDController(0.00, 0, 0);
+        ProfiledPIDController angle_control = new ProfiledPIDController(10, 0, 0, new TrapezoidProfile.Constraints(2, 1)); //DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5
         angle_control.enableContinuousInput(-Math.PI, Math.PI);
         PPSwerveControllerCommand pathCommand = new PPSwerveControllerCommand(
             trajectory,

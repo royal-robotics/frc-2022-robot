@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.swervedrivespecialties.swervelib.Mk3ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
@@ -60,9 +61,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * This is a measure of how fast the robot should be able to drive in a straight line.
      */
     // public static final double MAX_VELOCITY_METERS_PER_SECOND = 6380.0 / 60.0 *
-    //     SdsModuleConfigurations.MK3_FAST.getDriveReduction() *
-    //     SdsModuleConfigurations.MK3_FAST.getWheelDiameter() * Math.PI;
-    public static final double MAX_VELOCITY_METERS_PER_SECOND = 4.2 * 1.08; // Measured;
+    //     SdsModuleConfigurations.MK3_STANDARD.getDriveReduction() *
+    //     SdsModuleConfigurations.MK3_STANDARD.getWheelDiameter() * Math.PI;
+    public static final double MAX_VELOCITY_METERS_PER_SECOND = 4.358; // Measured;
 
     // Here we calculate the theoretical maximum angular velocity. You can also replace this with a measured amount.
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
@@ -104,6 +105,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final SwerveModule m_backLeftModule;
     private final SwerveModule m_backRightModule;
 
+    private final TalonFX m_frontLeftTalon;
+    private final TalonFX m_frontRightTalon;
+    private final TalonFX m_backLeftTalon;
+    private final TalonFX m_backRightTalon;
+
     private double maxVelocity = 0.0;
 
     public final ShuffleboardTab m_dashboardTab = Shuffleboard.getTab("Drivetrain");
@@ -122,6 +128,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             FRONT_LEFT_MODULE_STEER_MOTOR,
             FRONT_LEFT_MODULE_STEER_ENCODER,
             FRONT_LEFT_MODULE_STEER_OFFSET);
+        m_frontLeftTalon = TalonFromSwerveModule(m_frontLeftModule);
 
         m_frontRightModule = Mk3SwerveModuleHelper.createFalcon500(
             m_dashboardTab.getLayout("Front Right Module", BuiltInLayouts.kList)
@@ -132,6 +139,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             FRONT_RIGHT_MODULE_STEER_MOTOR,
             FRONT_RIGHT_MODULE_STEER_ENCODER,
             FRONT_RIGHT_MODULE_STEER_OFFSET);
+        m_frontRightTalon = TalonFromSwerveModule(m_frontRightModule);
 
         m_backLeftModule = Mk3SwerveModuleHelper.createFalcon500(
             m_dashboardTab.getLayout("Back Left Module", BuiltInLayouts.kList)
@@ -142,6 +150,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             BACK_LEFT_MODULE_STEER_MOTOR,
             BACK_LEFT_MODULE_STEER_ENCODER,
             BACK_LEFT_MODULE_STEER_OFFSET);
+        m_backLeftTalon = TalonFromSwerveModule(m_backLeftModule);
 
         m_backRightModule = Mk3SwerveModuleHelper.createFalcon500(
             m_dashboardTab.getLayout("Back Right Module", BuiltInLayouts.kList)
@@ -152,7 +161,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             BACK_RIGHT_MODULE_STEER_MOTOR,
             BACK_RIGHT_MODULE_STEER_ENCODER,
             BACK_RIGHT_MODULE_STEER_OFFSET);
-
+        m_backRightTalon = TalonFromSwerveModule(m_backRightModule);
 
         Shuffleboard.getTab("Competition")
             .addNumber("Gryo", () -> getGyroscopeRotation().getDegrees())
@@ -184,6 +193,19 @@ public class DrivetrainSubsystem extends SubsystemBase {
         testTab.addNumber("BL Angle", () -> (m_ModuleState[2].angle.getDegrees())).withPosition(2, 1);
         testTab.addNumber("BR Speed", () -> (m_ModuleState[3].speedMetersPerSecond)).withPosition(3, 0);
         testTab.addNumber("BR Angle", () -> (m_ModuleState[3].angle.getDegrees())).withPosition(3, 1);
+
+
+
+        m_frontLeftTalon.setSelectedSensorPosition(0.0);
+        m_frontRightTalon.setSelectedSensorPosition(0.0);
+        m_backLeftTalon.setSelectedSensorPosition(0.0);
+        m_backRightTalon.setSelectedSensorPosition(0.0);
+        var coefficient = getSensorCoefficientFromSwerveModule(m_backLeftModule) / 10.0;
+        testTab.addNumber("FL Pos", () -> (m_frontLeftTalon.getSelectedSensorPosition() * coefficient)).withPosition(0, 2);
+        testTab.addNumber("FR Pos", () -> (m_frontRightTalon.getSelectedSensorPosition() * coefficient)).withPosition(1, 2);
+        testTab.addNumber("BL Pos", () -> (m_backLeftTalon.getSelectedSensorPosition() * coefficient)).withPosition(2, 2);
+        testTab.addNumber("BR Pos", () -> (m_backRightTalon.getSelectedSensorPosition() * coefficient)).withPosition(3, 2);
+        testTab.addNumber("MaxVel", () -> (this.MAX_VELOCITY_METERS_PER_SECOND)).withPosition(0, 3);
     }
 
   /**
@@ -238,5 +260,31 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
         m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
         m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
+    }
+
+    private static TalonFX TalonFromSwerveModule(SwerveModule swerveModule) {
+        try {
+            var driveControllerField = swerveModule.getClass().getDeclaredField("driveController");
+            driveControllerField.setAccessible(true);
+            var driveController = driveControllerField.get(swerveModule);
+            var motorField = driveController.getClass().getDeclaredField("motor");
+            motorField.setAccessible(true);
+            return  (TalonFX)motorField.get(driveController);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static double getSensorCoefficientFromSwerveModule(SwerveModule swerveModule) {
+        try {
+            var driveControllerField = swerveModule.getClass().getDeclaredField("driveController");
+            driveControllerField.setAccessible(true);
+            var driveController = driveControllerField.get(swerveModule);
+            var coefficientField = driveController.getClass().getDeclaredField("sensorVelocityCoefficient");
+            coefficientField.setAccessible(true);
+            return coefficientField.getDouble(driveController);
+        } catch (Exception e) {
+            return 0.0;
+        }
     }
 }
