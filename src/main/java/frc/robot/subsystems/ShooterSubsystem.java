@@ -75,6 +75,7 @@ public class ShooterSubsystem extends SubsystemBase{
     private PIDController m_speedController;
 
     private DigitalInput m_bottomLimit;
+    private DigitalInput m_topLimit;
 
     private final Limelight m_limelight = new Limelight();
     private boolean m_readyToFire = false;
@@ -96,6 +97,7 @@ public class ShooterSubsystem extends SubsystemBase{
         m_speedController.setTolerance(100);
 
         m_bottomLimit = new DigitalInput(0);
+        m_topLimit = new DigitalInput(1); //place holder value
 
         m_speedEntry = Shuffleboard.getTab("Competition")
             .add("Wheel Speed", 0)
@@ -178,6 +180,10 @@ public class ShooterSubsystem extends SubsystemBase{
         Shuffleboard.getTab("Shooter")
         .addBoolean("Bottom Limit", () -> m_bottomLimit.get())
         .withPosition(4, 3);
+
+        Shuffleboard.getTab("Shooter")
+        .addBoolean("Top Limit", () -> m_topLimit.get())
+        .withPosition(4, 4);
 
         Shuffleboard.getTab("Camera")
         .addBoolean("tv", () ->  m_limelight.onTarget())
@@ -304,9 +310,17 @@ public class ShooterSubsystem extends SubsystemBase{
         m_readyToFire = isReadyToFire();
 
         if (m_bottomLimit.get()) {
-            bottomVoltage = m_analogPotentiometer.getAverageVoltage() - 0.005;
+            bottomVoltage = m_analogPotentiometer.getAverageVoltage();
             topVoltage = bottomVoltage + VOLTAGE_RANGE;
 
+            scale = (BOTTOM_ANGLE - TOP_ANGLE) / (topVoltage - bottomVoltage);
+            offset = scale * topVoltage + TOP_ANGLE;
+        }
+
+        if(m_topLimit.get()) {
+            topVoltage = m_analogPotentiometer.getAverageVoltage();
+            bottomVoltage = topVoltage - VOLTAGE_RANGE;
+            
             scale = (BOTTOM_ANGLE - TOP_ANGLE) / (topVoltage - bottomVoltage);
             offset = scale * topVoltage + TOP_ANGLE;
         }
@@ -314,6 +328,6 @@ public class ShooterSubsystem extends SubsystemBase{
 
     private boolean isReadyToFire() {
         var tx = m_limelight.targetX();
-        return m_limelight.onTarget() && (tx > -1 && tx < 1) && m_angleController.atSetpoint() && m_speedController.atSetpoint();
+        return m_limelight.onTarget() && (tx > -1.5 && tx < 1.5) && m_angleController.atSetpoint() && m_speedController.atSetpoint();
     }
 }

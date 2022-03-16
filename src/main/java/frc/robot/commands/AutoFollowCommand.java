@@ -15,8 +15,8 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 
 public class AutoFollowCommand extends SequentialCommandGroup {
 
-    public AutoFollowCommand(DrivetrainSubsystem drivetrainSubsystem, String pathName) {
-        var trajectory = PathPlanner.loadPath(pathName, 2.0, 1.0);
+    public AutoFollowCommand(DrivetrainSubsystem drivetrainSubsystem, String pathName, double maxV, double maxA) {
+        var trajectory = PathPlanner.loadPath(pathName, maxV, maxA);
 
         // Reset gyro and pose to match path
         this.addCommands(new InstantCommand(()-> {
@@ -27,7 +27,7 @@ public class AutoFollowCommand extends SequentialCommandGroup {
         // Follow path
         PIDController x_control = new PIDController(0.01, 0, 0);
         PIDController y_control = new PIDController(0.01, 0, 0);
-        ProfiledPIDController angle_control = new ProfiledPIDController(.1, 0, 0, new TrapezoidProfile.Constraints(DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5));
+        ProfiledPIDController angle_control = new ProfiledPIDController(5, 0, 0, new TrapezoidProfile.Constraints(2, 1)); //DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5
         angle_control.enableContinuousInput(-Math.PI, Math.PI);
         PPSwerveControllerCommand pathCommand = new PPSwerveControllerCommand(
             trajectory,

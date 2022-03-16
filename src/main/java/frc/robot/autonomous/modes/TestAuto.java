@@ -11,7 +11,7 @@ public class TestAuto extends AutoModeBase {
 
         var drivetrainSubsystem = robotContainer.drivetrainSubsystem;
         this.addCommands(new WaitCommand(0.5));
-        this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "MeterPath"));
+        this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "RotateMeter", 2, 1));
 
         addRequirements(robotContainer.drivetrainSubsystem);
     }

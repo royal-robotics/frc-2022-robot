@@ -18,10 +18,11 @@ public class HangarBallTwoBall extends AutoModeBase {
         //this.addCommands(new AutoMoveShooter(shooterSubsystem, -21));
         this.addCommands(new AutoShootCommand(shooterSubsystem, 2500));
         this.addCommands(new AutoPickupCommand(shooterSubsystem));
-        this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "HangarBallPath"));
+        this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "HangarBallPath", 0.25, 1));
         this.addCommands(new WaitCommand(1));
         this.addCommands(new AutoMoveShooter(shooterSubsystem, -21));
         this.addCommands(new AutoShootCommand(shooterSubsystem, 2800));
-        this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "SmallPath"));
+        this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "SmallPath", 2
+        , 1));
     }
 }
