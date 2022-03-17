@@ -165,8 +165,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         Shuffleboard.getTab("Competition")
             .addNumber("Gryo", () -> getGyroscopeRotation().getDegrees())
-            .withWidget(BuiltInWidgets.kGyro)
-            .withSize(2, 2)
+           // .withWidget(BuiltInWidgets.kGyro)
+            //.withSize(2, 2)
             .withPosition(0, 1);
 
         m_dashboardTab.addNumber("x-Odometry", () -> m_odometry.getPoseMeters().getX()).withPosition(8, 1);

@@ -19,7 +19,7 @@ public class MiddleBallTwoBall extends AutoModeBase {
         this.addCommands(new AutoShootCommand(shooterSubsystem, 2300));
         this.addCommands(new AutoPickupCommand(shooterSubsystem));
         this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "MiddleBallPathRedTest", 2, 1));
-        this.addCommands(new WaitCommand(1));
+        //this.addCommands(new WaitCommand(1));
         this.addCommands(new AutoMoveShooter(shooterSubsystem, -21));
         this.addCommands(new AutoShootCommand(shooterSubsystem, 3200));
         // this.addCommands(new AutoPickupCommand(shooterSubsystem));

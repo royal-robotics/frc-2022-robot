@@ -1,0 +1,471 @@
+/*******************************************************************************
+ *                                                                             *
+ * CSS for experimental 2522 shuffleboard theme                                *
+ *                                                                             *
+ ******************************************************************************/
+ @import "/edu/wpi/first/shuffleboard/api/base.css";
+
+ /*******************************************************************************
+  *                                                                             *
+  * Global constants                                                            *
+  *                                                                             *
+  ******************************************************************************/
+ .root {
+     -fx-text-base-color: #ffffff;
+     -fx-text-base-2: #ffffff;
+     -fx-text-hover: #ffffff;
+     
+     /* Swatch Colors - Yellow */
+ 
+     -swatch-100: hsb(46, 100%, 90%);
+     -swatch-200: hsb(46, 100%, 90%);
+     -swatch-300: hsb(46, 100%, 95%);
+     -swatch-400: hsb(46, 100%, 95%);
+     -swatch-500: hsb(46, 100%, 100%);
+ 
+     -swatch-dark-gray: rgb(0, 0, 0);
+     -swatch-gray: derive(-swatch-dark-gray, +10%);
+     -swatch-light-gray: derive(-swatch-gray, +23%);
+     -fx-background: -swatch-gray;
+     -fx-color: -swatch-gray;
+     -confirmation-color-confirmed: lime;
+     -confirmation-color-error: red;
+ }
+ 
+ .text {
+     -fx-effect: dropshadow(three-pass-box, rgb(0, 0, 0),2, 1, 0, 0);
+ }
+ 
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Widget pane                                                                 *
+  *                                                                             *
+  ******************************************************************************/
+ .widget-pane {
+     -fx-grid-line-color: -swatch-dark-gray;
+ }
+ 
+ .grid-highlight {
+     -fx-border-color: #a7a7f7;
+     -fx-background-color: #FFFFFF08;
+ }
+ 
+ .grid-highlight:colliding {
+     -fx-border-color: -swatch-500;
+     -fx-background-color: #00000008;
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Grid Selection                                                              *
+  *                                                                             *
+  ******************************************************************************/
+ .grid-selection {
+     -fx-fill: #FFFFFF08;
+     -fx-stroke: #A7A7F7;
+     -fx-stroke-width: 0.25em;
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Menus                                                                       *
+  *                                                                             *
+  ******************************************************************************/
+ .menu-bar {
+     -fx-background-color: black;
+ }
+ 
+ .menu-item {
+     -fx-background-color: -swatch-gray;
+ }
+ 
+ 
+ .menu:hover, .menu:selected {
+     -fx-background-color: -swatch-200;
+ }
+ 
+ 
+ .menu-item:hover, .menu-item:selected {
+     -fx-background-color: -swatch-200;
+ }
+ 
+ 
+ .context-menu {
+     -fx-background-color: -swatch-gray;
+ }
+ .context-menu .label:hover{
+     -fx-text-fill: -fx-text-hover;
+ }
+ .context-menu .label {
+     -fx-text-fill: -fx-text-base-color;
+ }
+ 
+ .menu:hover .label, .label:selected, .label:focused {
+     -fx-text-fill: -fx-text-base-color;
+ }
+ 
+ 
+ /*need to fix coloring and highlighting*/
+ 
+ 
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Text field, text area                                                       *
+  *                                                                             *
+  ******************************************************************************/
+ .text-field, .text-area {
+     -fx-text-fill: -fx-text-base-color;
+     -underline-color: -swatch-gray;
+     -fx-border-color: -swatch-light-gray;
+     /*-fx-effect: dropshadow(three-pass-box, rgb(0, 0, 0),3, 1, 0, 0);*/
+ }
+ 
+ .text-field:focused, .text-area:focused {
+     -fx-border-color: -swatch-200;
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Button, toggle button                                                       *
+  *                                                                             *
+  ******************************************************************************/
+ .toggle-button, .button {
+     -fx-background-color: rgb(64, 64, 64);
+     -fx-text-fill: -fx-text-base-color;
+     -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.70), 6.0, 0.3, 0, 2);
+ }
+ 
+ .toggle-button:selected, .button:selected {
+     -fx-background-color: -swatch-500;
+     -fx-text-fill: -fx-text-base-2;
+     /*fx-effect: dropshadow(three-pass-box, rgb(0, 0, 0),3, 1, 0, 0);*/
+ }
+ 
+ .button-raised .button .text, .button-flat .button .text {
+     -fx-text-weight: Bold;
+ }
+ 
+ .button:default {
+     -fx-background-color: -swatch-500;
+     -fx-text-fill: -fx-text-base-2;
+ }
+ 
+ .toggle-button:focused, .button:focused, .button:default:focused {
+     -fx-background-color: rgb(48, 48, 48);
+     -fx-text-fill: -fx-text-base-color;
+ }
+ 
+ .toggle-button:focused:selected {
+     -fx-background-color: derive(-swatch-500, -12%);
+     -fx-text-fill: -fx-text-base-2;
+ }
+ 
+ .toggle-button:armed, .toggle-button:selected, .button:armed, .button:default:armed {
+     -fx-background-color: -swatch-500;
+     -fx-text-fill: -fx-text-base-2;
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Toggle switch                                                               *
+  *                                                                             *
+  ******************************************************************************/
+ .tile .toggle-switch > .thumb-area {
+     -fx-background-color: -swatch-light-gray, -swatch-gray;
+ }
+ 
+ .toggle-switch > .thumb-area {
+     -fx-background-color: derive(-swatch-light-gray, -25%), -swatch-dark-gray;
+ }
+ 
+ .toggle-switch > .thumb {
+     -fx-background-color: #2c2828;
+ }
+ 
+ .tile .toggle-switch:selected > .thumb-area,
+ .toggle-switch:selected > .thumb-area {
+     -fx-background-color: -swatch-500;
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Progress bar                                                                *
+  *                                                                             *
+  ******************************************************************************/
+ .progress-bar .track {
+     -fx-background-color: rgba(0, 0, 0, 0.3);
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Titled pane                                                                 *
+  *                                                                             *
+  ******************************************************************************/
+ .titled-pane > .title {
+     -fx-background-color: -swatch-light-gray;
+     -fx-text-fill: -fx-text-base-color;
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Tree table, table view                                                      *
+  *                                                                             *
+  ******************************************************************************/
+ .tree-table-view *, .table-view * {
+     -fx-border-color: transparent;
+ }
+ 
+ .table-row-cell * {
+     -fx-text-fill: -fx-text-base-color;
+     /*-fx-effect: dropshadow(three-pass-box, rgb(0, 0, 0),3, 1, 0, 0);*/
+ }
+ 
+ .tree-table-row-cell:selected, .table-row-cell:selected {
+     -fx-background-color: -swatch-light-gray;
+ }
+ 
+ .tree-table-row-cell:selected *, .table-row-cell:selected * {
+     -fx-text-fill: #f7d727;
+ }
+ 
+ .tree-table-view, .table-view {
+     -fx-background-color: -swatch-dark-gray;
+ }
+ 
+ .tree-table-view .column-header, .table-view .column-header {
+     -fx-background-color: -swatch-500;
+ }
+ 
+ .column-header-background {
+     -fx-background-color: #111111;
+ }
+ 
+ .tree-table-row-cell, .table-row-cell {
+     -fx-background-color: -swatch-gray;
+     -fx-border-color: transparent;
+ }
+ 
+ .tree-table-row-cell:empty, .tree-table-row-cell:empty:hover,
+ .table-row-cell:empty, .table-row-cell:empty:hover {
+     -fx-background-color: transparent;
+ }
+ 
+ .tree-table-row-cell > .tree-disclosure-node > .arrow,
+ .tree-cell > .tree-disclosure-node > .arrow {
+     -fx-background-color: white;
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Scroll pane                                                                 *
+  *                                                                             *
+  ******************************************************************************/
+ .scroll-pane .corner {
+     -fx-background-color: -swatch-dark-gray;
+ }
+ 
+ .scroll-bar .track-background {
+     -fx-background-color: -swatch-dark-gray !important;
+ }
+ 
+ .scroll-bar .thumb {
+     -fx-background-color: -swatch-light-gray !important;
+ }
+ 
+ .scroll-bar .increment-arrow, .scroll-bar .decrement-arrow {
+     -fx-background-color: white !important;
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Tiles                                                                       *
+  *                                                                             *
+  ******************************************************************************/
+ .tile {
+     -fx-background-color: -swatch-dark-gray;
+     -fx-effect: dropshadow(gaussian, -swatch-500, 10, 0.4, 0, 0);
+ }
+ 
+ .tile:selected {
+     -fx-background-color: #10102F;
+     -fx-effect: dropshadow(gaussian, -swatch-100, 6, 0.1, 0, 4);
+ }
+ 
+ .tile:selected .tile-title-bar {
+     -fx-background-color: -swatch-500;
+ }
+ 
+ .tile .label {
+     -fx-text-fill: -fx-text-base-color;
+      /*fx-effect: dropshadow(three-pass-box, rgb(0, 0, 0),3, 1, 0, 0);*/
+ }
+ 
+ .tile-title-bar {
+     -fx-background-color: rgb(0, 0, 0);
+     -fx-text-fill: -fx-text-base-color;
+     
+ }
+ .tile-title-bar .label {
+     -fx-text-fill: -fx-text-base-color;
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Layouts                                                                     *
+  *                                                                             *
+  ******************************************************************************/
+ .layout-stack {
+     -fx-background-color: rgba(255, 255, 255, 0.03);
+     -fx-border-color: black;
+ }
+ 
+ .layout-label * {
+     -fx-text-fill: #aaa;
+      /*fx-effect: dropshadow(three-pass-box, rgb(0, 0, 0),3, 1, 0, 0);*/
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * List view                                                                   *
+  *                                                                             *
+  ******************************************************************************/
+ .list-view {
+     -fx-background-color: transparent;
+ }
+ 
+ .list-view .list-cell {
+     -fx-background-color: -swatch-gray;
+ }
+ 
+ .list-view .list-cell:filled:focused:selected {
+     -fx-background-color: -swatch-500;
+     -fx-text-fill: -fx-text-base-color;
+      /*fx-effect: dropshadow(three-pass-box, rgb(0, 0, 0),3, 1, 0, 0);*/
+ }
+ 
+ .list-view:focused .list-cell:filled:focused:selected {
+     -fx-background-color: -swatch-100;
+ }
+ 
+ .list-view:hover .list-cell:filled:hover {
+     -fx-background-color: -swatch-light-gray;
+     -fx-text-fill: -fx-text-base-color;
+      /*fx-effect: dropshadow(three-pass-box, rgb(0, 0, 0),3, 1, 0, 0);*/
+ }
+ 
+ .list-view:hover .list-cell:hover {
+     -fx-background-color: null;
+     -fx-text-fill: -fx-text-base-color;
+      /*fx-effect: dropshadow(three-pass-box, rgb(0, 0, 0),3, 1, 0, 0);*/
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Combobox                                                                    *
+  *                                                                             *
+  ******************************************************************************/
+ .combo-box-base, .choice-box {
+     -fx-border-color: -swatch-light-gray;
+ }
+ 
+ .combo-box-popup {
+     -fx-border-color: orange;
+ }
+ 
+ .combo-box-popup .list-view {
+     -fx-border-color: -swatch-300;
+     -fx-border-width: 1px;
+     -fx-background-color: -swatch-dark-gray;
+ }
+ 
+ .combo-box-popup .list-view .list-cell {
+     -fx-background-color: transparent;
+     -fx-border-color: none;
+ }
+ 
+ .combo-box-popup .list-view .list-cell:hover {
+     -fx-background-color: -swatch-gray;
+ }
+ 
+ .combo-box-popup .list-view .list-cell:selected {
+     -fx-background-color: -swatch-500;
+     -fx-text-fill: -fx-text-base-color;
+      /*fx-effect: dropshadow(three-pass-box, rgb(0, 0, 0),3, 1, 0, 0);*/
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Slider, range slider                                                        *
+  *                                                                             *
+  ******************************************************************************/
+ .slider .axis, .range-slider .axis {
+     -fx-tick-label-fill: #eee;
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Medusa gauges                                                               *
+  *                                                                             *
+  ******************************************************************************/
+ .gauge {
+     -fx-needle-color: -swatch-100;
+     -fx-tick-mark-color: white;
+     -fx-major-tick-color: white;
+     -fx-minor-tick-color: #aaa;
+     -fx-medium-tick-color: #aaa;
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Tab pane, tabs                                                              *
+  *                                                                             *
+  ******************************************************************************/
+ .tab-pane {
+     -fx-border-color: transparent;
+ }
+ .dashboard-tabs .tab .label {
+     -fx-text-fill: -fx-text-base-color;
+ }
+ 
+ .tab .tab-close-button {
+     -fx-background-color:rgb(0, 0, 0);
+ }
+ 
+ .tab:selected .tab-label {
+     -fx-border-color: rgb(0, 0, 0);
+ }
+ /*need to fix underline and x*/
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Drive bases                                                                 *
+  *                                                                             *
+  ******************************************************************************/
+ .robot-drive {
+     -fx-fill: #666;
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Settings dialogs                                                            *
+  *                                                                             *
+  ******************************************************************************/
+ .settings-pane {
+     -fx-border-color: #171F2F;
+ }
+ 
+ /*******************************************************************************
+  *                                                                             *
+  * Graph (axis) labels                                                         *
+  *                                                                             *
+  ******************************************************************************/
+ .axis-label {
+     -fx-fill: white;
+ }
+ 
+ .axis {
+     -fx-tick-label-fill: white;
+ }
+ 
