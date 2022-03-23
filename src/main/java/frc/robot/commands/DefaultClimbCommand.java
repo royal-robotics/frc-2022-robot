@@ -16,6 +16,7 @@ public class DefaultClimbCommand extends CommandBase {
     private final BooleanSupplier m_enableClimberAngle;
     private final BooleanSupplier m_angleExtendSupplier;
     private final BooleanSupplier m_angleRetractSupplier;
+    private double lastDistance;
 
     public DefaultClimbCommand(ClimberSubsystem subsystem,
             DoubleSupplier climberAngleSupplier,
@@ -65,8 +66,10 @@ public class DefaultClimbCommand extends CommandBase {
 
         double distanceSetpointChange = m_climberSupplier.getAsDouble() * 2;
         if (distanceSetpointChange != 0) {
-            double newDistanceSetpoint = m_subsystem.getDistance() + distanceSetpointChange;
-            m_subsystem.setDistanceSetpoint(newDistanceSetpoint);
+            lastDistance = m_subsystem.getDistance() + distanceSetpointChange;
+            m_subsystem.setDistanceSetpoint(lastDistance);
+        } else {
+            m_subsystem.setDistanceSetpoint(lastDistance);
         }
 
         double climber = m_climberSupplier.getAsDouble();

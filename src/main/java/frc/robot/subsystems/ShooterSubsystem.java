@@ -36,9 +36,9 @@ public class ShooterSubsystem extends SubsystemBase{
 
     public final double TOP_ANGLE = -21;
     public final double BOTTOM_ANGLE = 122;
-    public double topVoltage = 2.463;
-    public double bottomVoltage = 2.279;
-    public final double VOLTAGE_RANGE = 0.194;
+    public double topVoltage = 2.467;
+    public double bottomVoltage = 2.277;
+    public final double VOLTAGE_RANGE = 0.18;
 
     private double scale = (BOTTOM_ANGLE - TOP_ANGLE) / (topVoltage - bottomVoltage);
     private double offset = scale * topVoltage + TOP_ANGLE;
@@ -79,6 +79,8 @@ public class ShooterSubsystem extends SubsystemBase{
 
     private final Limelight m_limelight = new Limelight();
     private boolean m_readyToFire = false;
+    private boolean bottomLimitSet = false;
+    private boolean topLimitSet = false;
 
     public ShooterSubsystem(){
         m_shooterAngle = new CANSparkMax(SHOOTER_ANGLE_MOTOR, MotorType.kBrushless);
@@ -309,20 +311,26 @@ public class ShooterSubsystem extends SubsystemBase{
 
         m_readyToFire = isReadyToFire();
 
-        if (m_bottomLimit.get()) {
+        if (m_bottomLimit.get() && !bottomLimitSet) {
             bottomVoltage = m_analogPotentiometer.getAverageVoltage();
             topVoltage = bottomVoltage + VOLTAGE_RANGE;
 
             scale = (BOTTOM_ANGLE - TOP_ANGLE) / (topVoltage - bottomVoltage);
             offset = scale * topVoltage + TOP_ANGLE;
+            bottomLimitSet = true;
+        } else {
+            bottomLimitSet = false;
         }
 
-        if(m_topLimit.get()) {
+        if(m_topLimit.get() && !topLimitSet) {
             topVoltage = m_analogPotentiometer.getAverageVoltage();
             bottomVoltage = topVoltage - VOLTAGE_RANGE;
             
             scale = (BOTTOM_ANGLE - TOP_ANGLE) / (topVoltage - bottomVoltage);
             offset = scale * topVoltage + TOP_ANGLE;
+            topLimitSet = true;
+        } else {
+            topLimitSet = false;
         }
     }
 

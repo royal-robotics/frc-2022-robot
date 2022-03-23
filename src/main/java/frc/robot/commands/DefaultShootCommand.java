@@ -61,7 +61,7 @@ public class DefaultShootCommand extends CommandBase {
         double shooterWheels = -m_shooterWheelsSupplier.getAsDouble() * m_subsystem.m_speedEntry.getDouble(m_subsystem.RPM_TOP);
         if (shooterWheels != 0) {
             if (m_shortShotSupplier.getAsBoolean()) {
-                shooterWheels = 2500;
+                shooterWheels = 2600;
             } else if (m_midShotSupplier.getAsBoolean()) {
                 shooterWheels = 3000;
             } else if (m_longShotSupplier.getAsBoolean()) {
