@@ -17,7 +17,7 @@ public class AutoPickupCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        m_shooterSubsystem.setAngleSetpoint(m_shooterSubsystem.pickupAngle);
+        m_shooterSubsystem.setAngleSetpoint(m_shooterSubsystem.BOTTOM_ANGLE);
         m_shooterSubsystem.setMotorStates(-4000, -0.5);
         m_shooterSubsystem.setSolenoidStates(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kForward);
     }

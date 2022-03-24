@@ -22,8 +22,6 @@ import java.util.Map;
 
 public class ShooterSubsystem extends SubsystemBase{
 
-    public final int pickupAngle = 121;
-
     public final int SHOOTER_ANGLE_MOTOR = 3;
     public final int RIGHT_SHOOTER_WHEEL_MOTOR = 9;
     public final int LEFT_SHOOTER_WHEEL_MOTOR = 8;
@@ -301,11 +299,10 @@ public class ShooterSubsystem extends SubsystemBase{
 
         var shooterAngle = getAngle();
         m_angleOutput = m_angleController.calculate(shooterAngle);
-        if (angleSetpoint > 100 && shooterAngle > 100) {
-            m_angleOutput = 0.2;
-        }
-        if (angleSetpoint > 115 && shooterAngle > 115) {
-            m_angleOutput = 0.05;
+        if (angleSetpoint == BOTTOM_ANGLE && shooterAngle < 117) {
+            m_angleOutput = 1.0;
+        } else if (angleSetpoint < 40 && shooterAngle > 40) {
+            m_angleOutput = -1.0;
         }
         m_shooterAngle.set(m_angleOutput);
 
@@ -325,7 +322,7 @@ public class ShooterSubsystem extends SubsystemBase{
         if(m_topLimit.get() && !topLimitSet) {
             topVoltage = m_analogPotentiometer.getAverageVoltage();
             bottomVoltage = topVoltage - VOLTAGE_RANGE;
-            
+
             scale = (BOTTOM_ANGLE - TOP_ANGLE) / (topVoltage - bottomVoltage);
             offset = scale * topVoltage + TOP_ANGLE;
             topLimitSet = true;

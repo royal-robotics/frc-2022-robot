@@ -8,6 +8,7 @@ import frc.robot.input.XboxController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class ShootCommand extends CommandBase {
@@ -26,14 +27,18 @@ public class ShootCommand extends CommandBase {
     private final double offset = -scale * TY_FAR + RPM_FAR;
     */
     private final double scale = -50.6693;
-    private final double offset = 3546.1;
+    private final double offset = 3646.1;
     private final double m_slowScale = 0.25;
+    private double sin = 0;
+    private double cos = 0;
 
     public ShootCommand(ShooterSubsystem shootSystem, DrivetrainSubsystem driveSystem, XboxController operator, StickController driver) {
         m_shooterSubsystem = shootSystem;
         m_drivetrainSubsystem = driveSystem;
         m_operator = operator;
         m_driver = driver;
+        Shuffleboard.getTab("Competition").addNumber("Sin", ()->sin).withPosition(0, 2);
+        Shuffleboard.getTab("Competition").addNumber("Cos", ()->cos).withPosition(1, 2);
         addRequirements(shootSystem, driveSystem);
     }
 
@@ -51,15 +56,17 @@ public class ShootCommand extends CommandBase {
             var ty = m_limelight.targetY();
             if (ty > 20 && m_shooterSubsystem.getAngle() > 22.5) {
                 m_shooterSubsystem.setAngleSetpoint(20);
-            } else if (ty < 12 && m_shooterSubsystem.getAngle() < 22.5) {
+            } else if (ty < 10 && m_shooterSubsystem.getAngle() < 22.5) {
                 m_shooterSubsystem.setAngleSetpoint(25);
             }
 
             double rpm = ty * scale + offset;
 
-            ChassisSpeeds speed = new ChassisSpeeds(-m_driver.getForwardAxis().get(), -m_driver.getStrafeAxis().get(), -tx * 0.18);
+            cos = m_drivetrainSubsystem.getGyroscopeRotation().getCos();
+            sin = m_drivetrainSubsystem.getGyroscopeRotation().getSin();
+            ChassisSpeeds speed = ChassisSpeeds.fromFieldRelativeSpeeds(-m_driver.getForwardAxis().get(), -m_driver.getStrafeAxis().get(), -tx * 0.18, m_drivetrainSubsystem.getGyroscopeRotation());
             if(m_driver.getTrigger().getAsBoolean()){
-                speed = new ChassisSpeeds(-m_driver.getForwardAxis().get() * m_slowScale, -m_driver.getStrafeAxis().get() * m_slowScale, -tx * 0.18 * m_slowScale); //0.18 is an abritary value. It's a value derived from testing the robot.
+                speed = ChassisSpeeds.fromFieldRelativeSpeeds(-m_driver.getForwardAxis().get() * m_slowScale, -m_driver.getStrafeAxis().get() * m_slowScale, -tx * 0.18 * m_slowScale, m_drivetrainSubsystem.getGyroscopeRotation()); //0.18 is an abritary value. It's a value derived from testing the robot.
             }
 
             m_drivetrainSubsystem.drive(speed);
@@ -71,7 +78,7 @@ public class ShootCommand extends CommandBase {
                 m_shooterSubsystem.setSolenoidStates(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward);
             }
         } else {
-            ChassisSpeeds speed = new ChassisSpeeds(-m_driver.getForwardAxis().get(), -m_driver.getStrafeAxis().get(), -m_driver.getRotateAxis().get());
+            ChassisSpeeds speed = ChassisSpeeds.fromFieldRelativeSpeeds(-m_driver.getForwardAxis().get(), -m_driver.getStrafeAxis().get(), -m_driver.getRotateAxis().get(), m_drivetrainSubsystem.getGyroscopeRotation());
             m_drivetrainSubsystem.drive(speed);
         }
     }
