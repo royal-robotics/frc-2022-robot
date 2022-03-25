@@ -35,8 +35,8 @@ public class ClimberSubsystem extends SubsystemBase{
 
     public final double TOP_ANGLE = 90;
     public final double BOTTOM_ANGLE = -23;
-    public final double TOP_VOLTAGE = 2.479;
-    public final double BOTTOM_VOLTAGE = 1.892;
+    public final double TOP_VOLTAGE = 2.574;
+    public final double BOTTOM_VOLTAGE = 2.022;
 
     public final double TOP_DISTANCE = 32;
 

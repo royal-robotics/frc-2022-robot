@@ -26,7 +26,7 @@ public class ThreeBallAuto extends AutoModeBase {
         this.addCommands(new AutoPickupCommand(shooterSubsystem));
         this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "DiagonalPath", 2, 1));
         this.addCommands(new WaitCommand(1));
-        this.addCommands(new AutoRotateCommand(drivetrainSubsystem));
+        this.addCommands(new AutoRotateCommand(drivetrainSubsystem, 180));
         this.addCommands(new AutoShootCommand(shooterSubsystem, 2800));
     }
 }

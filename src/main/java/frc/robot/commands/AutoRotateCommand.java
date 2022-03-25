@@ -4,25 +4,28 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-
 public class AutoRotateCommand extends CommandBase {
     private final DrivetrainSubsystem m_subsystem;
+    private final double m_angle;
+    private double targetAngle;
 
     public AutoRotateCommand(
-            DrivetrainSubsystem subsystem) {
+            DrivetrainSubsystem subsystem,
+            double angle) {
         m_subsystem = subsystem;
-      
+        m_angle = angle;
+
         addRequirements(subsystem);
     }
 
     @Override
-    public void initialize() {}
+    public void initialize() {
+        targetAngle = m_angle + m_subsystem.getGyroscopeRotation().getDegrees();
+    }
 
     @Override
     public void execute() {
-       m_subsystem.drive(new ChassisSpeeds(0,0, Math.PI/2));
+       m_subsystem.drive(new ChassisSpeeds(0,0, Math.PI));
     }
 
     @Override
@@ -32,7 +35,7 @@ public class AutoRotateCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return m_subsystem.getGyroscopeRotation().getDegrees() > targetAngle;
     }
 
 }

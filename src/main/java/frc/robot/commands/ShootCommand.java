@@ -31,6 +31,8 @@ public class ShootCommand extends CommandBase {
     private final double m_slowScale = 0.25;
     private double sin = 0;
     private double cos = 0;
+    private double turnOffset = 0;
+    private double rpmOffset = 0;
 
     public ShootCommand(ShooterSubsystem shootSystem, DrivetrainSubsystem driveSystem, XboxController operator, StickController driver) {
         m_shooterSubsystem = shootSystem;
@@ -39,6 +41,7 @@ public class ShootCommand extends CommandBase {
         m_driver = driver;
         Shuffleboard.getTab("Competition").addNumber("Sin", ()->sin).withPosition(0, 2);
         Shuffleboard.getTab("Competition").addNumber("Cos", ()->cos).withPosition(1, 2);
+        Shuffleboard.getTab("Competition").addNumber("rpmOffset", ()->rpmOffset).withPosition(1, 1);
         addRequirements(shootSystem, driveSystem);
     }
 
@@ -60,13 +63,16 @@ public class ShootCommand extends CommandBase {
                 m_shooterSubsystem.setAngleSetpoint(25);
             }
 
-            double rpm = ty * scale + offset;
+            rpmOffset = (m_driver.getStrafeAxis().get() * sin * 50) + (-m_driver.getForwardAxis().get() * cos * 50);
+            double rpm = (ty * scale + offset) + rpmOffset;
 
             cos = m_drivetrainSubsystem.getGyroscopeRotation().getCos();
             sin = m_drivetrainSubsystem.getGyroscopeRotation().getSin();
-            ChassisSpeeds speed = ChassisSpeeds.fromFieldRelativeSpeeds(-m_driver.getForwardAxis().get(), -m_driver.getStrafeAxis().get(), -tx * 0.18, m_drivetrainSubsystem.getGyroscopeRotation());
+            turnOffset = (m_driver.getStrafeAxis().get() * cos * 2) + (-m_driver.getForwardAxis().get() * sin * 2);
+
+            ChassisSpeeds speed = ChassisSpeeds.fromFieldRelativeSpeeds(-m_driver.getForwardAxis().get(), -m_driver.getStrafeAxis().get(), -tx * 0.18 + turnOffset, m_drivetrainSubsystem.getGyroscopeRotation());
             if(m_driver.getTrigger().getAsBoolean()){
-                speed = ChassisSpeeds.fromFieldRelativeSpeeds(-m_driver.getForwardAxis().get() * m_slowScale, -m_driver.getStrafeAxis().get() * m_slowScale, -tx * 0.18 * m_slowScale, m_drivetrainSubsystem.getGyroscopeRotation()); //0.18 is an abritary value. It's a value derived from testing the robot.
+                speed = ChassisSpeeds.fromFieldRelativeSpeeds(-m_driver.getForwardAxis().get() * m_slowScale, -m_driver.getStrafeAxis().get() * m_slowScale, -tx * 0.18 * m_slowScale + turnOffset, m_drivetrainSubsystem.getGyroscopeRotation()); //0.18 is an abritary value. It's a value derived from testing the robot.
             }
 
             m_drivetrainSubsystem.drive(speed);

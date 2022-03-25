@@ -303,6 +303,8 @@ public class ShooterSubsystem extends SubsystemBase{
             m_angleOutput = 1.0;
         } else if (angleSetpoint < 40 && shooterAngle > 40) {
             m_angleOutput = -1.0;
+        } else if (angleSetpoint == TOP_ANGLE && shooterAngle > -16) {
+            m_angleOutput = -1.0;
         }
         m_shooterAngle.set(m_angleOutput);
 
