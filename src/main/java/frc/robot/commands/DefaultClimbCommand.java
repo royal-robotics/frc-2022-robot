@@ -61,7 +61,7 @@ public class DefaultClimbCommand extends CommandBase {
         if (m_angleExtendSupplier.getAsBoolean()) {
             m_subsystem.setAngleSetpoint(80);
         } else if (m_angleRetractSupplier.getAsBoolean()) {
-            m_subsystem.setAngleSetpoint(40);
+            m_subsystem.setAngleSetpoint(50);
         }
 
         double distanceSetpointChange = m_climberSupplier.getAsDouble() * 2;

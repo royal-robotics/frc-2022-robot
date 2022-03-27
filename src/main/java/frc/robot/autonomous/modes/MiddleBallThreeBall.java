@@ -25,9 +25,9 @@ public class MiddleBallThreeBall extends AutoModeBase {
         //this.addCommands(new WaitCommand(1));
         this.addCommands(new AutoMoveShooter(shooterSubsystem, -21));
         this.addCommands(new AutoShootCommand(shooterSubsystem, 3200));
-        this.addCommands(new ParallelCommandGroup(new AutoPickupCommand(shooterSubsystem), new AutoFollowCommand(drivetrainSubsystem, "MeterPath", 4, 2)));
+        this.addCommands(new ParallelCommandGroup(new AutoPickupCommand(shooterSubsystem), new AutoFollowCommand(drivetrainSubsystem, "MiddleBallThreeBall", 4, 2)));
         //this.addCommands(new AutoPickupCommand(shooterSubsystem));
-        //this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "MeterPath", 4, 2));
+        //this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "MiddleBallThreeBall", 4, 2));
         this.addCommands(new ParallelCommandGroup(new AutoRotateCommand(drivetrainSubsystem, 134), new AutoMoveShooter(shooterSubsystem, 25)));
         this.addCommands(new AutoShootCommand(shooterSubsystem, 4000));
         //this.addCommands(new AutoRotateCommand(drivetrainSubsystem, 180));

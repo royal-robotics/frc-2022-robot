@@ -93,7 +93,7 @@ public class ShooterSubsystem extends SubsystemBase{
         m_speedFeedForward = new SimpleMotorFeedforward(0.00002, 0.00026);
         m_speedController = new PIDController(0.002, 0, 0);
 
-        m_angleController.setTolerance(2);
+        m_angleController.setTolerance(3);
         m_speedController.setTolerance(100);
 
         m_bottomLimit = new DigitalInput(0);
@@ -301,7 +301,7 @@ public class ShooterSubsystem extends SubsystemBase{
         m_angleOutput = m_angleController.calculate(shooterAngle);
         if (angleSetpoint == BOTTOM_ANGLE && shooterAngle < 117) {
             m_angleOutput = 1.0;
-        } else if (angleSetpoint < 45 && shooterAngle > 45) {
+        } else if (angleSetpoint < 40 && shooterAngle > 40) {
             m_angleOutput = -1.0;
         } else if (angleSetpoint == TOP_ANGLE && shooterAngle > -16) {
             m_angleOutput = -1.0;

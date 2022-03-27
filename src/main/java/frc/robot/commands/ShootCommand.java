@@ -16,6 +16,7 @@ public class ShootCommand extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private final XboxController m_operator;
     private final StickController m_driver;
+    //private final XboxController m_driver;
     private final Limelight m_limelight = new Limelight();
 
     private final double TY_CLOSE = 16;
@@ -35,6 +36,7 @@ public class ShootCommand extends CommandBase {
     private double rpmOffset = 0;
 
     public ShootCommand(ShooterSubsystem shootSystem, DrivetrainSubsystem driveSystem, XboxController operator, StickController driver) {
+    //public ShootCommand(ShooterSubsystem shootSystem, DrivetrainSubsystem driveSystem, XboxController operator, XboxController driver) {
         m_shooterSubsystem = shootSystem;
         m_drivetrainSubsystem = driveSystem;
         m_operator = operator;
@@ -57,22 +59,30 @@ public class ShootCommand extends CommandBase {
 
             var tx = m_limelight.targetX();
             var ty = m_limelight.targetY();
-            if (ty > 20 && m_shooterSubsystem.getAngle() > 22.5) {
+            if (ty > 19 && m_shooterSubsystem.getAngle() > 22.5) {
                 m_shooterSubsystem.setAngleSetpoint(20);
             } else if (ty < 10 && m_shooterSubsystem.getAngle() < 22.5) {
                 m_shooterSubsystem.setAngleSetpoint(25);
             }
 
             rpmOffset = (m_driver.getStrafeAxis().get() * sin * 50) + (-m_driver.getForwardAxis().get() * cos * 50);
+            //rpmOffset = (-m_driver.getLeftX().get() * sin * 50) + (m_driver.getLeftY().get() * cos * 50);
             double rpm = (ty * scale + offset) + rpmOffset;
+            if (rpm < 2600) {
+                rpm = 2600;
+            }
 
             cos = m_drivetrainSubsystem.getGyroscopeRotation().getCos();
             sin = m_drivetrainSubsystem.getGyroscopeRotation().getSin();
             turnOffset = (m_driver.getStrafeAxis().get() * cos * 2) + (-m_driver.getForwardAxis().get() * sin * 2);
+            //turnOffset = (-m_driver.getLeftY().get() * cos * 2) + (m_driver.getLeftX().get() * sin * 2);
 
             ChassisSpeeds speed = ChassisSpeeds.fromFieldRelativeSpeeds(-m_driver.getForwardAxis().get(), -m_driver.getStrafeAxis().get(), -tx * 0.18 + turnOffset, m_drivetrainSubsystem.getGyroscopeRotation());
+            //ChassisSpeeds speed = ChassisSpeeds.fromFieldRelativeSpeeds(m_driver.getLeftY().get() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, m_driver.getLeftX().get() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, -tx * 0.18 + turnOffset, m_drivetrainSubsystem.getGyroscopeRotation());
             if(m_driver.getTrigger().getAsBoolean()){
+            //if(m_driver.getRightTrigger().get() > 0.5){
                 speed = ChassisSpeeds.fromFieldRelativeSpeeds(-m_driver.getForwardAxis().get() * m_slowScale, -m_driver.getStrafeAxis().get() * m_slowScale, -tx * 0.18 * m_slowScale + turnOffset, m_drivetrainSubsystem.getGyroscopeRotation()); //0.18 is an abritary value. It's a value derived from testing the robot.
+                //speed = ChassisSpeeds.fromFieldRelativeSpeeds(m_driver.getLeftY().get() * m_slowScale * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, m_driver.getLeftX().get() * m_slowScale * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, -tx * 0.18 * m_slowScale + turnOffset, m_drivetrainSubsystem.getGyroscopeRotation()); //0.18 is an abritary value. It's a value derived from testing the robot.
             }
 
             m_drivetrainSubsystem.drive(speed);
@@ -85,6 +95,7 @@ public class ShootCommand extends CommandBase {
             }
         } else {
             ChassisSpeeds speed = ChassisSpeeds.fromFieldRelativeSpeeds(-m_driver.getForwardAxis().get(), -m_driver.getStrafeAxis().get(), -m_driver.getRotateAxis().get(), m_drivetrainSubsystem.getGyroscopeRotation());
+            //ChassisSpeeds speed = ChassisSpeeds.fromFieldRelativeSpeeds(m_driver.getLeftY().get() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, m_driver.getLeftX().get() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, m_driver.getRightX().get() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, m_drivetrainSubsystem.getGyroscopeRotation());
             m_drivetrainSubsystem.drive(speed);
         }
     }

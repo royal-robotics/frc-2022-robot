@@ -18,7 +18,7 @@ public class RobotContainer {
     private static final int PRIMARY_CONTROLLER_PORT = 0;
     private static final int SECONDARY_CONTROLLER_PORT = 1;
 
-    // private final XboxController m_controller = new XboxController(PRIMARY_CONTROLLER_PORT);
+    //private final XboxController m_controller = new XboxController(PRIMARY_CONTROLLER_PORT);
     private final StickController m_controller = new StickController(PRIMARY_CONTROLLER_PORT);
     private final XboxController m_operator = new XboxController(SECONDARY_CONTROLLER_PORT);
 
@@ -41,6 +41,9 @@ public class RobotContainer {
         m_controller.getT1().whenPressed(
             () -> drivetrainSubsystem.zeroGyroscope()
         );
+        /*m_controller.getX().whenPressed(
+            () -> drivetrainSubsystem.zeroGyroscope()
+        );*/
         m_operator.getA().whenPressed(
             () -> {
                 if (m_operator.getLeftTrigger().get() == 0) {
