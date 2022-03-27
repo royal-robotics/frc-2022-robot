@@ -34,11 +34,14 @@ public class ClimberSubsystem extends SubsystemBase{
     private double m_distanceSetpoint = 0;
 
     public final double TOP_ANGLE = 90;
-    public final double BOTTOM_ANGLE = -23;
-    public final double TOP_VOLTAGE = 2.574;
-    public final double BOTTOM_VOLTAGE = 2.022;
+    public final double BOTTOM_ANGLE = -24;
+    public final double TOP_VOLTAGE = 2.610;
+    public final double BOTTOM_VOLTAGE = 2.029;
 
-    public final double TOP_DISTANCE = 32;
+    private final int SMART_LIMIT = 60;
+    private final double SECONDARY_LIMIT = 70;
+
+    public final double TOP_DISTANCE = 31;
 
     private double scale = (BOTTOM_ANGLE - TOP_ANGLE) / (TOP_VOLTAGE - BOTTOM_VOLTAGE);
     private double offset = scale * TOP_VOLTAGE + TOP_ANGLE;
@@ -62,11 +65,16 @@ public class ClimberSubsystem extends SubsystemBase{
         m_rightClimber = new CANSparkMax(RIGHT_CLIMBER_MOTOR, MotorType.kBrushless);
         m_climberAngle = new CANSparkMax(CLIMBER_ANGLE_MOTOR, MotorType.kBrushless);
 
+        m_leftClimber.setSmartCurrentLimit(SMART_LIMIT);
+        m_leftClimber.setSecondaryCurrentLimit(SECONDARY_LIMIT);
+        m_rightClimber.setSmartCurrentLimit(SMART_LIMIT);
+        m_rightClimber.setSecondaryCurrentLimit(SECONDARY_LIMIT);
+
         m_analogPotentiometer = new AnalogInput(1);
         m_encoder = new Encoder(12, 13, false);
         m_encoder.setDistancePerPulse(0.02360515021);
 
-        m_angleController = new PIDController(0.05, 0, 0);
+        m_angleController = new PIDController(0.04, 0, 0);
         m_distanceController = new PIDController(0.5, 0, 0);
 
         Shuffleboard.getTab("Competition")
@@ -128,6 +136,22 @@ public class ClimberSubsystem extends SubsystemBase{
         Shuffleboard.getTab("Climber")
         .addNumber("Distance Power", () -> m_climberState)
         .withPosition(4,3);
+
+        Shuffleboard.getTab("Climber")
+        .addNumber("Left Current", () -> m_leftClimber.getOutputCurrent())
+        .withPosition(6, 1);
+
+        Shuffleboard.getTab("Climber")
+        .addNumber("Right Current", () -> m_rightClimber.getOutputCurrent())
+        .withPosition(7, 1);
+
+        Shuffleboard.getTab("Climber")
+        .addNumber("Left Applied", () -> m_leftClimber.getAppliedOutput())
+        .withPosition(6, 2);
+
+        Shuffleboard.getTab("Climber")
+        .addNumber("Right Applied", () -> m_rightClimber.getAppliedOutput())
+        .withPosition(7, 2);
     }
 
     public void setMotorStates(double climberState, double climberAngleState){
@@ -152,7 +176,7 @@ public class ClimberSubsystem extends SubsystemBase{
     public void setAngleSetpointCurrent(){
         setAngleSetpoint(getAngle());
     }
-    
+
     public void setDistanceSetpoint(double setpoint) {
          if (setpoint < 0) {
              setpoint = 0;

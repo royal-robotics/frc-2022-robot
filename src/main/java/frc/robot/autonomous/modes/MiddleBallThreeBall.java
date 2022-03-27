@@ -10,9 +10,9 @@ import frc.robot.commands.AutoPickupCommand;
 import frc.robot.commands.AutoRotateCommand;
 import frc.robot.commands.AutoShootCommand;
 
-public class MiddleBallTwoBall extends AutoModeBase {
-    public MiddleBallTwoBall(RobotContainer robotContainer) {
-        super("MiddleBallTwoBall");
+public class MiddleBallThreeBall extends AutoModeBase {
+    public MiddleBallThreeBall(RobotContainer robotContainer) {
+        super("MiddleBallThreeBall");
 
         var drivetrainSubsystem = robotContainer.drivetrainSubsystem;
         var shooterSubsystem = robotContainer.shooterSubsystem;
@@ -25,5 +25,13 @@ public class MiddleBallTwoBall extends AutoModeBase {
         //this.addCommands(new WaitCommand(1));
         this.addCommands(new AutoMoveShooter(shooterSubsystem, -21));
         this.addCommands(new AutoShootCommand(shooterSubsystem, 3200));
+        this.addCommands(new ParallelCommandGroup(new AutoPickupCommand(shooterSubsystem), new AutoFollowCommand(drivetrainSubsystem, "MeterPath", 4, 2)));
+        //this.addCommands(new AutoPickupCommand(shooterSubsystem));
+        //this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "MeterPath", 4, 2));
+        this.addCommands(new ParallelCommandGroup(new AutoRotateCommand(drivetrainSubsystem, 134), new AutoMoveShooter(shooterSubsystem, 25)));
+        this.addCommands(new AutoShootCommand(shooterSubsystem, 4000));
+        //this.addCommands(new AutoRotateCommand(drivetrainSubsystem, 180));
+        // this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "MiddleBallPath_2", 2, 1));
+        //this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "SmallPath"));
     }
 }

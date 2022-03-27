@@ -27,7 +27,7 @@ public class ShootCommand extends CommandBase {
     private final double offset = -scale * TY_FAR + RPM_FAR;
     */
     private final double scale = -50.6693;
-    private final double offset = 3646.1;
+    private final double offset = 3546.1;
     private final double m_slowScale = 0.25;
     private double sin = 0;
     private double cos = 0;

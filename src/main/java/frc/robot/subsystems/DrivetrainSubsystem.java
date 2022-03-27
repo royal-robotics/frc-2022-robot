@@ -27,10 +27,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     // Based on the absolute position of the encoders, use this procedure to calculate:
     // https://github.com/SwerveDriveSpecialties/swerve-template#setting-up-module-offsets
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(120.493);
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(199.594);
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(58.708);
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(302.426);
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(121.0144);
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(166.6351);
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(58.0078);
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(302.6047);
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 3;
@@ -235,18 +235,20 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public void setStableModuleStates() {
-        m_ModuleState = new SwerveModuleState[] {
+       m_ModuleState = new SwerveModuleState[] {
             new SwerveModuleState(0, new Rotation2d(-Math.PI / 4)),
             new SwerveModuleState(0, new Rotation2d(Math.PI / 4)),
             new SwerveModuleState(0, new Rotation2d(-3 * Math.PI / 4)),
             new SwerveModuleState(0, new Rotation2d(3 * Math.PI / 4))
         };
-        /*m_ModuleState = new SwerveModuleState[] {
+    /*
+        m_ModuleState = new SwerveModuleState[] {
             new SwerveModuleState(0, new Rotation2d(0)),
             new SwerveModuleState(0, new Rotation2d(0)),
             new SwerveModuleState(0, new Rotation2d(0)),
             new SwerveModuleState(0, new Rotation2d(0))
-        };*/
+        };
+        */
     }
 
     @Override

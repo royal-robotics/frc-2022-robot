@@ -3,14 +3,7 @@ package frc.robot.autonomous;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.RobotContainer;
-import frc.robot.autonomous.modes.DoNothingAutoMode;
-import frc.robot.autonomous.modes.HangarBallTwoBall;
-import frc.robot.autonomous.modes.MiddleBallTwoBall;
-import frc.robot.autonomous.modes.ShootThenBackup;
-import frc.robot.autonomous.modes.TestAuto;
-import frc.robot.autonomous.modes.ThreeBallAuto;
-import frc.robot.autonomous.modes.WallBallTwoBall;
-
+import frc.robot.autonomous.modes.*;
 import java.util.function.*;
 
 public class AutoModeSelector {
@@ -24,8 +17,10 @@ public class AutoModeSelector {
         //this.addAutoMode(() -> new ThreeBallAuto(robotContainer));
         // this.addAutoMode(() -> new TestAuto(robotContainer));
         //this.addAutoMode(() -> new WallBallTwoBall(robotContainer));
-        //this.addAutoMode(() -> new HangarBallTwoBall(robotContainer));
+        this.addAutoMode(() -> new HangarBallThreeBall(robotContainer));
         this.addAutoMode(() -> new MiddleBallTwoBall(robotContainer));
+        this.addAutoMode(() -> new MiddleBallThreeBall(robotContainer));
+        this.addAutoMode(() -> new WallBallThreeBall(robotContainer));
 
         Shuffleboard.getTab("Competition").add("Auto Mode", _chooser).withPosition(0, 0).withSize(2, 1);
     }

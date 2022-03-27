@@ -34,8 +34,8 @@ public class ShooterSubsystem extends SubsystemBase{
 
     public final double TOP_ANGLE = -21;
     public final double BOTTOM_ANGLE = 122;
-    public double topVoltage = 2.467;
-    public double bottomVoltage = 2.277;
+    public double topVoltage = 2.326659;
+    public double bottomVoltage = 2.1411;
     public final double VOLTAGE_RANGE = 0.18;
 
     private double scale = (BOTTOM_ANGLE - TOP_ANGLE) / (topVoltage - bottomVoltage);
@@ -301,7 +301,7 @@ public class ShooterSubsystem extends SubsystemBase{
         m_angleOutput = m_angleController.calculate(shooterAngle);
         if (angleSetpoint == BOTTOM_ANGLE && shooterAngle < 117) {
             m_angleOutput = 1.0;
-        } else if (angleSetpoint < 40 && shooterAngle > 40) {
+        } else if (angleSetpoint < 45 && shooterAngle > 45) {
             m_angleOutput = -1.0;
         } else if (angleSetpoint == TOP_ANGLE && shooterAngle > -16) {
             m_angleOutput = -1.0;
