@@ -97,7 +97,9 @@ public class ShooterSubsystem extends SubsystemBase{
         m_speedController.setTolerance(100);
 
         m_bottomLimit = new DigitalInput(0);
-        m_topLimit = new DigitalInput(1); //place holder value
+        m_topLimit = new DigitalInput(1);
+
+        m_limelight.setPipeline(1);
 
         m_speedEntry = Shuffleboard.getTab("Competition")
             .add("Wheel Speed", 0)

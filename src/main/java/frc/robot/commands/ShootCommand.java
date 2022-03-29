@@ -28,7 +28,7 @@ public class ShootCommand extends CommandBase {
     private final double offset = -scale * TY_FAR + RPM_FAR;
     */
     private final double scale = -50.6693;
-    private final double offset = 3546.1;
+    private final double offset = 3596.1;
     private final double m_slowScale = 0.25;
     private double sin = 0;
     private double cos = 0;
@@ -59,14 +59,14 @@ public class ShootCommand extends CommandBase {
 
             var tx = m_limelight.targetX();
             var ty = m_limelight.targetY();
-            if (ty > 19 && m_shooterSubsystem.getAngle() > 22.5) {
+            /*if (ty > 19 && m_shooterSubsystem.getAngle() > 22.5) {
                 m_shooterSubsystem.setAngleSetpoint(20);
             } else if (ty < 10 && m_shooterSubsystem.getAngle() < 22.5) {
                 m_shooterSubsystem.setAngleSetpoint(25);
-            }
+            }*/
 
-            rpmOffset = (m_driver.getStrafeAxis().get() * sin * 50) + (-m_driver.getForwardAxis().get() * cos * 50);
-            //rpmOffset = (-m_driver.getLeftX().get() * sin * 50) + (m_driver.getLeftY().get() * cos * 50);
+            rpmOffset = (-m_driver.getStrafeAxis().get() * sin * 250) + (m_driver.getForwardAxis().get() * cos * 250);
+            //rpmOffset = (-m_driver.getLeftX().get() * sin * 200) + (m_driver.getLeftY().get() * cos * 200);
             double rpm = (ty * scale + offset) + rpmOffset;
             if (rpm < 2600) {
                 rpm = 2600;
