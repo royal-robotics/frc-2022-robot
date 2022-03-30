@@ -24,11 +24,13 @@ public class AutoFollowCommand extends SequentialCommandGroup {
             drivetrainSubsystem.resetPose(trajectory.getInitialPose());
             drivetrainSubsystem.setGyroscope(trajectory.getInitialPose().getRotation().getDegrees());
         }));
+        // Wait a tiny bit
+        this.addCommands(new WaitCommand(0.1));
 
         // Follow path
         PIDController x_control = new PIDController(0.00, 0, 0);
         PIDController y_control = new PIDController(0.00, 0, 0);
-        ProfiledPIDController angle_control = new ProfiledPIDController(10, 0, 0, new TrapezoidProfile.Constraints(2, 1)); //DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5
+        ProfiledPIDController angle_control = new ProfiledPIDController(10, 0, 0, new TrapezoidProfile.Constraints(maxV, maxA)); //DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 5
         angle_control.enableContinuousInput(-Math.PI, Math.PI);
         PPSwerveControllerCommand pathCommand = new PPSwerveControllerCommand(
             trajectory,
@@ -39,7 +41,6 @@ public class AutoFollowCommand extends SequentialCommandGroup {
             (SwerveModuleState[] states) -> drivetrainSubsystem.setModuleStates(states),drivetrainSubsystem
         );
         this.addCommands(pathCommand);
-
         // Stop drivetrain
         this.addCommands(new InstantCommand(() -> drivetrainSubsystem.drive(new ChassisSpeeds()), drivetrainSubsystem));
     }

@@ -21,6 +21,7 @@ public class AutoModeSelector {
         this.addAutoMode(() -> new MiddleBallTwoBall(robotContainer));
         this.addAutoMode(() -> new MiddleBallThreeBall(robotContainer));
         this.addAutoMode(() -> new WallBallThreeBall(robotContainer));
+        this.addAutoMode(() -> new WallBallFourBall(robotContainer));
 
         Shuffleboard.getTab("Competition").add("Auto Mode", _chooser).withPosition(0, 0).withSize(2, 1);
     }
