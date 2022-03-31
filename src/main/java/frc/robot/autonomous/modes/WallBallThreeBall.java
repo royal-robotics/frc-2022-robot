@@ -8,6 +8,7 @@ import frc.robot.commands.AutoFollowCommand;
 import frc.robot.commands.AutoMoveShooter;
 import frc.robot.commands.AutoPickupCommand;
 import frc.robot.commands.AutoRotateCommand;
+import frc.robot.commands.AutoRotate2Command;
 import frc.robot.commands.AutoShootCommand;
 
 public class WallBallThreeBall extends AutoModeBase {
@@ -22,8 +23,8 @@ public class WallBallThreeBall extends AutoModeBase {
         this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "StraightPath", 4, 2));
         this.addCommands(new AutoMoveShooter(shooterSubsystem, -21));
         this.addCommands(new AutoShootCommand(shooterSubsystem, 2900));
-        this.addCommands(new ParallelCommandGroup(new AutoPickupCommand(shooterSubsystem), new AutoFollowCommand(drivetrainSubsystem, "WallBallThreeBall", 4, 2)));
-        this.addCommands(new ParallelCommandGroup(new AutoRotateCommand(drivetrainSubsystem, 55), new AutoMoveShooter(shooterSubsystem, shooterSubsystem.TOP_ANGLE)));
+        this.addCommands(new ParallelCommandGroup(new AutoPickupCommand(shooterSubsystem), new AutoFollowCommand(drivetrainSubsystem, "WallBallThreeBall", 5, 3)));
+        this.addCommands(new ParallelCommandGroup(new AutoRotate2Command(drivetrainSubsystem, -125), new AutoMoveShooter(shooterSubsystem, shooterSubsystem.TOP_ANGLE)));
         this.addCommands(new AutoShootCommand(shooterSubsystem, 3000));
     }
 }

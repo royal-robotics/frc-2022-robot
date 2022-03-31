@@ -8,6 +8,7 @@ import frc.robot.commands.AutoFollowCommand;
 import frc.robot.commands.AutoMoveShooter;
 import frc.robot.commands.AutoPickupCommand;
 import frc.robot.commands.AutoRotateCommand;
+import frc.robot.commands.AutoRotate2Command;
 import frc.robot.commands.AutoShootCommand;
 
 public class HangarBallThreeBall extends AutoModeBase {
@@ -26,7 +27,7 @@ public class HangarBallThreeBall extends AutoModeBase {
         this.addCommands(new AutoShootCommand(shooterSubsystem, 2900));
         this.addCommands(new ParallelCommandGroup(new AutoPickupCommand(shooterSubsystem), new AutoFollowCommand(drivetrainSubsystem, "HangarBallPath2", 4, 2)));
         //this.addCommands(new AutoFollowCommand(drivetrainSubsystem, "HangarBallPath2", 4, 2));
-        this.addCommands(new ParallelCommandGroup(new AutoRotateCommand(drivetrainSubsystem, 127), new AutoMoveShooter(shooterSubsystem, 25)));
-        this.addCommands(new AutoShootCommand(shooterSubsystem, 4100));
+        this.addCommands(new ParallelCommandGroup(new AutoRotate2Command(drivetrainSubsystem, 202), new AutoMoveShooter(shooterSubsystem, 25)));
+        this.addCommands(new AutoShootCommand(shooterSubsystem, 4000));
     }
 }

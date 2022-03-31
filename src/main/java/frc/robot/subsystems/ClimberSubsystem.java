@@ -30,18 +30,19 @@ public class ClimberSubsystem extends SubsystemBase{
     private final CANSparkMax m_climberAngle;
 
     private double m_climberState = 0;
+    private double m_climberAngleState = 0;
     private double m_angleSetpoint = 0;
     private double m_distanceSetpoint = 0;
 
     public final double TOP_ANGLE = 90;
     public final double BOTTOM_ANGLE = -24;
-    public final double TOP_VOLTAGE = 2.610;
-    public final double BOTTOM_VOLTAGE = 2.029;
+    public final double TOP_VOLTAGE = 2.6110;
+    public final double BOTTOM_VOLTAGE = 2.0185;
 
-    private final int SMART_LIMIT = 60;
-    private final double SECONDARY_LIMIT = 70;
+    private final int SMART_LIMIT = 40;
+    private final double SECONDARY_LIMIT = 50;
 
-    public final double TOP_DISTANCE = 31;
+    public final double TOP_DISTANCE = 77.5;
 
     private double scale = (BOTTOM_ANGLE - TOP_ANGLE) / (TOP_VOLTAGE - BOTTOM_VOLTAGE);
     private double offset = scale * TOP_VOLTAGE + TOP_ANGLE;
@@ -72,7 +73,7 @@ public class ClimberSubsystem extends SubsystemBase{
 
         m_analogPotentiometer = new AnalogInput(1);
         m_encoder = new Encoder(12, 13, false);
-        m_encoder.setDistancePerPulse(0.02360515021);
+        m_encoder.setDistancePerPulse(30.875/3314);
 
         m_angleController = new PIDController(0.04, 0, 0);
         m_distanceController = new PIDController(0.5, 0, 0);
@@ -156,6 +157,7 @@ public class ClimberSubsystem extends SubsystemBase{
 
     public void setMotorStates(double climberState, double climberAngleState){
         m_climberState = climberState;
+        m_climberAngleState = climberAngleState;
     }
 
     public void resetEncoder(){
@@ -205,9 +207,9 @@ public class ClimberSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        //double climbSpeed = m_climberState;
-        //m_leftClimber.set(climbSpeed);
-        //m_rightClimber.set(-climbSpeed);
+        double climbSpeed = m_climberState;
+        m_leftClimber.set(-climbSpeed);
+        m_rightClimber.set(-climbSpeed);
 
         //m_climberAngle.set(m_climberAngleState);
 
@@ -233,7 +235,7 @@ public class ClimberSubsystem extends SubsystemBase{
             m_distanceController.setSetpoint(distanceSetpoint);
         }
         m_distanceOutput = m_distanceController.calculate(m_encoder.getDistance());
-        m_leftClimber.set(m_distanceOutput);
-        m_rightClimber.set(-m_distanceOutput);
+        //m_leftClimber.set(m_distanceOutput);
+        //m_rightClimber.set(m_distanceOutput);
     }
 }

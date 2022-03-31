@@ -68,8 +68,8 @@ public class ShootCommand extends CommandBase {
             rpmOffset = (-m_driver.getStrafeAxis().get() * sin * 250) + (m_driver.getForwardAxis().get() * cos * 250);
             //rpmOffset = (-m_driver.getLeftX().get() * sin * 200) + (m_driver.getLeftY().get() * cos * 200);
             double rpm = (ty * scale + offset) + rpmOffset;
-            if (rpm < 2600) {
-                rpm = 2600;
+            if (rpm < 2500) {
+                rpm = 2500;
             }
 
             cos = m_drivetrainSubsystem.getGyroscopeRotation().getCos();
