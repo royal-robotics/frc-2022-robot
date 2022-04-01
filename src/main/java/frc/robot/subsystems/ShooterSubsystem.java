@@ -90,7 +90,7 @@ public class ShooterSubsystem extends SubsystemBase{
         m_kicker = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, KICKER_LEFT, KICKER_RIGHT);
 
         m_angleController = new PIDController(0.01, 0, 0);
-        m_speedFeedForward = new SimpleMotorFeedforward(0.00002, 0.00026);
+        m_speedFeedForward = new SimpleMotorFeedforward(0.03480, 0.0001996);
         m_speedController = new PIDController(0.002, 0, 0);
 
         m_angleController.setTolerance(3);

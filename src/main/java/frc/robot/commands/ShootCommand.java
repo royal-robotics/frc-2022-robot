@@ -59,14 +59,14 @@ public class ShootCommand extends CommandBase {
 
             var tx = m_limelight.targetX();
             var ty = m_limelight.targetY();
-            /*if (ty > 19 && m_shooterSubsystem.getAngle() > 22.5) {
+            if (ty > 16 && m_shooterSubsystem.getAngle() > 22.5) {
                 m_shooterSubsystem.setAngleSetpoint(20);
-            } else if (ty < 10 && m_shooterSubsystem.getAngle() < 22.5) {
+            } else if (ty < 0 && m_shooterSubsystem.getAngle() < 22.5) {
                 m_shooterSubsystem.setAngleSetpoint(25);
-            }*/
+            }
 
             rpmOffset = (-m_driver.getStrafeAxis().get() * sin * 250) + (m_driver.getForwardAxis().get() * cos * 250);
-            //rpmOffset = (-m_driver.getLeftX().get() * sin * 200) + (m_driver.getLeftY().get() * cos * 200);
+            //rpmOffset = (m_driver.getLeftX().get() * sin * 200) + (-m_driver.getLeftY().get() * cos * 200);
             double rpm = (ty * scale + offset) + rpmOffset;
             if (rpm < 2500) {
                 rpm = 2500;

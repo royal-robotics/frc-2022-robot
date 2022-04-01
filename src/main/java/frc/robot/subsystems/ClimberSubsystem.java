@@ -35,14 +35,15 @@ public class ClimberSubsystem extends SubsystemBase{
     private double m_distanceSetpoint = 0;
 
     public final double TOP_ANGLE = 90;
-    public final double BOTTOM_ANGLE = -24;
-    public final double TOP_VOLTAGE = 2.6110;
-    public final double BOTTOM_VOLTAGE = 2.0185;
+    public final double BOTTOM_ANGLE = -34;
+    public final double TOP_VOLTAGE = 2.507;
+    public final double BOTTOM_VOLTAGE = 1.893;
 
     private final int SMART_LIMIT = 40;
     private final double SECONDARY_LIMIT = 50;
 
-    public final double TOP_DISTANCE = 77.5;
+    public final double BOTTOM_DISTANCE = 0.1;
+    public final double TOP_DISTANCE = 30.75;
 
     private double scale = (BOTTOM_ANGLE - TOP_ANGLE) / (TOP_VOLTAGE - BOTTOM_VOLTAGE);
     private double offset = scale * TOP_VOLTAGE + TOP_ANGLE;
@@ -91,7 +92,7 @@ public class ClimberSubsystem extends SubsystemBase{
         m_distanceEntry = Shuffleboard.getTab("Climber")
             .add("Climber Distance", 0)
             .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(Map.of("min", 0, "max", TOP_DISTANCE, "block increment", 1))
+            .withProperties(Map.of("min", BOTTOM_DISTANCE, "max", TOP_DISTANCE, "block increment", 1))
             .withPosition(2, 0)
             .withSize(2, 2)
             .getEntry();
@@ -180,8 +181,8 @@ public class ClimberSubsystem extends SubsystemBase{
     }
 
     public void setDistanceSetpoint(double setpoint) {
-         if (setpoint < 0) {
-             setpoint = 0;
+         if (setpoint < BOTTOM_DISTANCE) {
+             setpoint = BOTTOM_DISTANCE;
          } else if (setpoint > TOP_DISTANCE) {
              setpoint = TOP_DISTANCE;
          }
@@ -207,9 +208,9 @@ public class ClimberSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        double climbSpeed = m_climberState;
-        m_leftClimber.set(-climbSpeed);
-        m_rightClimber.set(-climbSpeed);
+        //double climbSpeed = m_climberState;
+        //m_leftClimber.set(-climbSpeed);
+        //m_rightClimber.set(-climbSpeed);
 
         //m_climberAngle.set(m_climberAngleState);
 
@@ -234,8 +235,15 @@ public class ClimberSubsystem extends SubsystemBase{
         {
             m_distanceController.setSetpoint(distanceSetpoint);
         }
-        m_distanceOutput = m_distanceController.calculate(m_encoder.getDistance());
-        //m_leftClimber.set(m_distanceOutput);
-        //m_rightClimber.set(m_distanceOutput);
+
+        double distanceError = distanceSetpoint - getDistance();
+        if (distanceError < 0.1 && distanceError > -0.1) {
+            m_distanceOutput = 0;
+        } else {
+            m_distanceOutput = m_distanceController.calculate(m_encoder.getDistance());
+        }
+
+        m_leftClimber.set(-m_distanceOutput);
+        m_rightClimber.set(-m_distanceOutput);
     }
 }
