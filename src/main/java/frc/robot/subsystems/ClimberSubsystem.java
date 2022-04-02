@@ -39,8 +39,10 @@ public class ClimberSubsystem extends SubsystemBase{
     public final double TOP_VOLTAGE = 2.507;
     public final double BOTTOM_VOLTAGE = 1.893;
 
-    private final int SMART_LIMIT = 40;
-    private final double SECONDARY_LIMIT = 50;
+    private final int SMART_LIMIT_CLIMB = 40;
+    private final double SECONDARY_LIMIT_CLIMB = 50;
+    private final int SMART_LIMIT_ANGLE = 50;
+    private final double SECONDARY_LIMIT_ANGLE = 60;
 
     public final double BOTTOM_DISTANCE = 0.1;
     public final double TOP_DISTANCE = 30.75;
@@ -67,10 +69,12 @@ public class ClimberSubsystem extends SubsystemBase{
         m_rightClimber = new CANSparkMax(RIGHT_CLIMBER_MOTOR, MotorType.kBrushless);
         m_climberAngle = new CANSparkMax(CLIMBER_ANGLE_MOTOR, MotorType.kBrushless);
 
-        m_leftClimber.setSmartCurrentLimit(SMART_LIMIT);
-        m_leftClimber.setSecondaryCurrentLimit(SECONDARY_LIMIT);
-        m_rightClimber.setSmartCurrentLimit(SMART_LIMIT);
-        m_rightClimber.setSecondaryCurrentLimit(SECONDARY_LIMIT);
+        m_leftClimber.setSmartCurrentLimit(SMART_LIMIT_CLIMB);
+        m_leftClimber.setSecondaryCurrentLimit(SECONDARY_LIMIT_CLIMB);
+        m_rightClimber.setSmartCurrentLimit(SMART_LIMIT_CLIMB);
+        m_rightClimber.setSecondaryCurrentLimit(SECONDARY_LIMIT_CLIMB);
+        m_climberAngle.setSmartCurrentLimit(SMART_LIMIT_ANGLE);
+        m_climberAngle.setSecondaryCurrentLimit(SECONDARY_LIMIT_ANGLE);
 
         m_analogPotentiometer = new AnalogInput(1);
         m_encoder = new Encoder(12, 13, false);

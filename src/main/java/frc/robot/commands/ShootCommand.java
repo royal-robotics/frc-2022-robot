@@ -59,7 +59,7 @@ public class ShootCommand extends CommandBase {
 
             var tx = m_limelight.targetX();
             var ty = m_limelight.targetY();
-            if (ty > 16 && m_shooterSubsystem.getAngle() > 22.5) {
+            if (ty > 18 && m_shooterSubsystem.getAngle() > 22.5) {
                 m_shooterSubsystem.setAngleSetpoint(20);
             } else if (ty < 0 && m_shooterSubsystem.getAngle() < 22.5) {
                 m_shooterSubsystem.setAngleSetpoint(25);
@@ -94,7 +94,7 @@ public class ShootCommand extends CommandBase {
                 m_shooterSubsystem.setSolenoidStates(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward);
             }
         } else {
-            ChassisSpeeds speed = ChassisSpeeds.fromFieldRelativeSpeeds(-m_driver.getForwardAxis().get(), -m_driver.getStrafeAxis().get(), -m_driver.getRotateAxis().get(), m_drivetrainSubsystem.getGyroscopeRotation());
+            ChassisSpeeds speed = ChassisSpeeds.fromFieldRelativeSpeeds(-m_driver.getForwardAxis().get() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, -m_driver.getStrafeAxis().get() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, -m_driver.getRotateAxis().get() * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND, m_drivetrainSubsystem.getGyroscopeRotation());
             //ChassisSpeeds speed = ChassisSpeeds.fromFieldRelativeSpeeds(m_driver.getLeftY().get() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, m_driver.getLeftX().get() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, m_driver.getRightX().get() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, m_drivetrainSubsystem.getGyroscopeRotation());
             m_drivetrainSubsystem.drive(speed);
         }
