@@ -65,7 +65,7 @@ public class DefaultShootCommand extends CommandBase {
             } else if (m_midShotSupplier.getAsBoolean()) {
                 shooterWheels = 3000;
             } else if (m_longShotSupplier.getAsBoolean()) {
-                shooterWheels = 3800;
+                shooterWheels = 4200;
             }
         }
         m_subsystem.setMotorStates(shooterWheels, 0);

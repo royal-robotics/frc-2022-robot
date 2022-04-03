@@ -27,8 +27,8 @@ public class ShootCommand extends CommandBase {
     /*private final double scale = (RPM_FAR - RPM_CLOSE) / (TY_FAR - TY_CLOSE);
     private final double offset = -scale * TY_FAR + RPM_FAR;
     */
-    private final double scale = -50.6693;
-    private final double offset = 3596.1;
+    private final double scale = -82.6747;//-50.6693;
+    private final double offset = 3989;//3596.1;
     private final double m_slowScale = 0.25;
     private double sin = 0;
     private double cos = 0;
@@ -41,15 +41,12 @@ public class ShootCommand extends CommandBase {
         m_drivetrainSubsystem = driveSystem;
         m_operator = operator;
         m_driver = driver;
-        Shuffleboard.getTab("Competition").addNumber("Sin", ()->sin).withPosition(0, 2);
-        Shuffleboard.getTab("Competition").addNumber("Cos", ()->cos).withPosition(1, 2);
-        Shuffleboard.getTab("Competition").addNumber("rpmOffset", ()->rpmOffset).withPosition(1, 1);
         addRequirements(shootSystem, driveSystem);
     }
 
     @Override
     public void initialize() {
-        m_shooterSubsystem.setAngleSetpoint(25);
+        m_shooterSubsystem.setAngleSetpoint(20);
     }
 
     @Override
@@ -59,18 +56,19 @@ public class ShootCommand extends CommandBase {
 
             var tx = m_limelight.targetX();
             var ty = m_limelight.targetY();
-            if (ty > 18 && m_shooterSubsystem.getAngle() > 22.5) {
+            if (ty > 16 && m_shooterSubsystem.getAngle() > 22.5) {
                 m_shooterSubsystem.setAngleSetpoint(20);
             } else if (ty < 0 && m_shooterSubsystem.getAngle() < 22.5) {
                 m_shooterSubsystem.setAngleSetpoint(25);
             }
 
-            rpmOffset = (-m_driver.getStrafeAxis().get() * sin * 250) + (m_driver.getForwardAxis().get() * cos * 250);
+            rpmOffset = (-m_driver.getStrafeAxis().get() * sin * 200) + (m_driver.getForwardAxis().get() * cos * 200); //250 is old value
             //rpmOffset = (m_driver.getLeftX().get() * sin * 200) + (-m_driver.getLeftY().get() * cos * 200);
-            double rpm = (ty * scale + offset) + rpmOffset;
-            if (rpm < 2500) {
-                rpm = 2500;
+            double rpm = ty * scale + offset;
+            if (rpm < 2900) {
+                rpm = 2900;
             }
+            rpm += rpmOffset;
 
             cos = m_drivetrainSubsystem.getGyroscopeRotation().getCos();
             sin = m_drivetrainSubsystem.getGyroscopeRotation().getSin();
