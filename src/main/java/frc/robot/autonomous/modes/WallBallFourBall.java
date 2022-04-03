@@ -25,7 +25,7 @@ public class WallBallFourBall extends AutoModeBase {
         this.addCommands(new AutoShootCommand(shooterSubsystem, 2900));
         this.addCommands(new ParallelCommandGroup(new AutoPickupCommand(shooterSubsystem), new AutoFollowCommand(drivetrainSubsystem, "WallBallThreeBall", 5, 3)));
         this.addCommands(new ParallelCommandGroup(new AutoRotate2Command(drivetrainSubsystem, -125), new AutoMoveShooter(shooterSubsystem, shooterSubsystem.TOP_ANGLE)));
-        this.addCommands(new AutoShootCommand(shooterSubsystem, 3000));
+        this.addCommands(new AutoShootCommand(shooterSubsystem, 3100));
         this.addCommands(new ParallelCommandGroup(new AutoPickupCommand(shooterSubsystem), new AutoFollowCommand(drivetrainSubsystem, "WallBallFourBall2", 5, 3)));
         this.addCommands(new ParallelCommandGroup(new AutoRotate2Command(drivetrainSubsystem, 38), new AutoMoveShooter(shooterSubsystem, 25)));
         this.addCommands(new AutoShootCommand(shooterSubsystem, 3900));

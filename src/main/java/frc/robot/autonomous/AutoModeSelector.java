@@ -15,7 +15,7 @@ public class AutoModeSelector {
         this.addAutoMode(() -> new DoNothingAutoMode());
         this.addAutoMode(() -> new ShootThenBackup(robotContainer), true);
         //this.addAutoMode(() -> new ThreeBallAuto(robotContainer));
-        // this.addAutoMode(() -> new TestAuto(robotContainer));
+        //this.addAutoMode(() -> new TestAuto(robotContainer));
         //this.addAutoMode(() -> new WallBallTwoBall(robotContainer));
         this.addAutoMode(() -> new HangarBallThreeBall(robotContainer));
         this.addAutoMode(() -> new MiddleBallTwoBall(robotContainer));

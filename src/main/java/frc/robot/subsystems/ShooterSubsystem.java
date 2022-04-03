@@ -89,9 +89,9 @@ public class ShooterSubsystem extends SubsystemBase{
         m_extendIntake = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, EXTEND_INTAKE_LEFT, EXTEND_INTAKE_RIGHT);
         m_kicker = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, KICKER_LEFT, KICKER_RIGHT);
 
-        m_angleController = new PIDController(0.01, 0, 0);
+        m_angleController = new PIDController(0.015, 0, 0);
         m_speedFeedForward = new SimpleMotorFeedforward(0.03480, 0.0001996);
-        m_speedController = new PIDController(0.002, 0, 0);
+        m_speedController = new PIDController(0.001, 0, 0);
 
         m_angleController.setTolerance(3);
         m_speedController.setTolerance(100);
@@ -281,8 +281,8 @@ public class ShooterSubsystem extends SubsystemBase{
             wheelSpeed = 0;
         }
 
-        m_rightShooterWheel.set(ControlMode.PercentOutput, wheelSpeed);
-        m_leftShooterWheel.set(ControlMode.PercentOutput, -wheelSpeed);
+        m_rightShooterWheel.set(ControlMode.PercentOutput, -wheelSpeed);
+        m_leftShooterWheel.set(ControlMode.PercentOutput, wheelSpeed);
 
         m_intake.set(ControlMode.PercentOutput, m_intakeState);
 
