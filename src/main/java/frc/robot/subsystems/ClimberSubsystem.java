@@ -36,8 +36,8 @@ public class ClimberSubsystem extends SubsystemBase{
 
     public final double TOP_ANGLE = 90;
     public final double BOTTOM_ANGLE = -34;
-    public final double TOP_VOLTAGE = 2.507;
-    public final double BOTTOM_VOLTAGE = 1.893;
+    public final double TOP_VOLTAGE = 3.1812;
+    public final double BOTTOM_VOLTAGE = 2.5928;
 
     private final int SMART_LIMIT_CLIMB = 40;
     private final double SECONDARY_LIMIT_CLIMB = 50;

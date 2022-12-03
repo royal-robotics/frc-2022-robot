@@ -7,6 +7,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class DefaultClimbCommand extends CommandBase {
     private final ClimberSubsystem m_subsystem;
@@ -16,6 +17,7 @@ public class DefaultClimbCommand extends CommandBase {
     private final BooleanSupplier m_enableClimberAngle;
     private final BooleanSupplier m_angleExtendSupplier;
     private final BooleanSupplier m_angleRetractSupplier;
+    private final BooleanSupplier m_angleResetSupplier;
     private double lastDistance;
 
     public DefaultClimbCommand(ClimberSubsystem subsystem,
@@ -23,7 +25,8 @@ public class DefaultClimbCommand extends CommandBase {
             DoubleSupplier climberSupplier,
             BooleanSupplier enableClimberAngle,
             BooleanSupplier angleExtendSupplier,
-            BooleanSupplier angleRetractSupplier){
+            BooleanSupplier angleRetractSupplier,
+            BooleanSupplier angleResetSupplier){
 
         m_subsystem = subsystem;
         m_climberAngleSupplier = climberAngleSupplier;
@@ -31,6 +34,7 @@ public class DefaultClimbCommand extends CommandBase {
         m_enableClimberAngle = enableClimberAngle;
         m_angleExtendSupplier = angleExtendSupplier;
         m_angleRetractSupplier = angleRetractSupplier;
+        m_angleResetSupplier = angleResetSupplier;
 
         addRequirements(subsystem);
     }
@@ -42,7 +46,8 @@ public class DefaultClimbCommand extends CommandBase {
             ()-> controller.getRightY().get(),
             ()-> controller.getRightBumper().get(),
             ()-> controller.getDpadLeft().get(),
-            ()-> controller.getDpadRight().get());
+            ()-> controller.getDpadRight().get(),
+            ()-> controller.getDpadUp().get());
     }
 
     @Override
@@ -62,6 +67,8 @@ public class DefaultClimbCommand extends CommandBase {
             m_subsystem.setAngleSetpoint(65);
         } else if (m_angleRetractSupplier.getAsBoolean()) {
             m_subsystem.setAngleSetpoint(45);
+        } else if (m_angleResetSupplier.getAsBoolean()) {
+            m_subsystem.setAngleSetpoint(m_subsystem.BOTTOM_ANGLE + 5);
         }
 
         double distanceSetpointChange = m_climberSupplier.getAsDouble() * 2;

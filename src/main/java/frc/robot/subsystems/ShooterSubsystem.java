@@ -32,11 +32,11 @@ public class ShooterSubsystem extends SubsystemBase{
     public final int KICKER_LEFT = 3;
     public final int KICKER_RIGHT = 4;
 
-    public final double TOP_ANGLE = -21;
-    public final double BOTTOM_ANGLE = 122;
-    public double topVoltage = 2.326659;
-    public double bottomVoltage = 2.1411;
-    public final double VOLTAGE_RANGE = 0.18;
+    public final double TOP_ANGLE = -20;
+    public final double BOTTOM_ANGLE = 121;
+    public double topVoltage = 2.7941;
+    public double bottomVoltage = 2.6013;
+    public final double VOLTAGE_RANGE = topVoltage - bottomVoltage;
 
     private double scale = (BOTTOM_ANGLE - TOP_ANGLE) / (topVoltage - bottomVoltage);
     private double offset = scale * topVoltage + TOP_ANGLE;

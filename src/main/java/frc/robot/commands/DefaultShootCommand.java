@@ -63,7 +63,7 @@ public class DefaultShootCommand extends CommandBase {
             if (m_shortShotSupplier.getAsBoolean()) {
                 shooterWheels = 2600;
             } else if (m_midShotSupplier.getAsBoolean()) {
-                shooterWheels = 3000;
+                shooterWheels = 3400;
             } else if (m_longShotSupplier.getAsBoolean()) {
                 shooterWheels = 4200;
             }
